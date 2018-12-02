@@ -59,11 +59,11 @@ def main():
                 print("本スクリプトは、このタイプのファイルにはまだ対応していません！")
                 print(f"ファイル名: {f}")
                 continue
-            target_dir = os.path.join(Source.DESTINATION_FILE_DIRECTORY.value, f.replace(' ', '_'))
+            target_dir = os.path.join(Source.DESTINATION_FILE_DIRECTORY.value, os.path.splitext(f.replace(' ', '_'))[0])
 
             if not os.path.exists(target_dir):
                 make_dir(p=target_dir)
-                comm = f"ffmpeg -i {os.path.join(working_directory, replace_file_name)}" \
+                comm = f"ffmpeg -i {os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name)} " \
                     f"-max_muxing_queue_size 1024 -c:v {vcodec} -vbsf h264_mp4toannexb "\
                     f"-c:a {acodec} -ar 44100 -pix_fmt yuv420p -map 0:0 -map 0:1 "\
                     f"-f segment -segment_format mpegts -segment_time 10 "\
