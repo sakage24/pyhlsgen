@@ -19,7 +19,7 @@ def main():
         else:
             vcodec = 'libx265'
             acodec = 'copy'
-            target_dir = os.path.join(Source.DESTINATION_FILE_DIRECTORY.value, f.replace(' ', '_'))
+            target_dir = os.path.join(working_directory, f.replace(' ', '_'))
 
             if not os.path.exists(target_dir):
                 manager.make_directory(path=target_dir)
