@@ -13,18 +13,18 @@ def main():
     for f in manager.get_movie_list():
         replace_file_name = manager.get_replace_character(name=f)
         try:
-            os.rename(f, replace_file_name)
+            os.rename(os.path.join(Source.SOURCE_FILE_DIRECTORY.value, f), os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name))
         except OSError as e:
             print(f'RENAME中にエラーが発生しました...\n対象ファイル: {f}\nエラー内容: {e}')
         else:
-            vcodec = 'libx265'
+            vcodec = 'libx264'
             acodec = 'copy'
-            target_dir = os.path.join(working_directory, f.replace(' ', '_'))
+            target_dir = os.path.join(working_directory, os.path.splitext(replace_file_name)[0])
 
             if not os.path.exists(target_dir):
                 manager.make_directory(path=target_dir)
-                comm = f"ffmpeg -i {os.path.join(working_directory, replace_file_name)}" \
-                    f"-max_muxing_queue_size 1024 -c:v {vcodec} -tag:v hvc1 -vbsf hevc_mp4toannexb "\
+                comm = f"ffmpeg -i {os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name)} "\
+                    f"-max_muxing_queue_size 1024 -c:v {vcodec} -tag:v hvc1 -vbsf h264_mp4toannexb "\
                     f"-c:a {acodec} -ar 44100 -pix_fmt yuv420p -map 0:0 -map 0:1 "\
                     f"-f segment -segment_format mpegts -segment_time 10 "\
                     f"-segment_list {os.path.join(target_dir, 'output.m3u8')} " \
@@ -43,10 +43,14 @@ def main():
                 print(f'{f}は既にありますのでスキップします...')
 
         finally:
-            os.rename(replace_file_name,  f)
+            os.rename(os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name), os.path.join(Source.SOURCE_FILE_DIRECTORY.value, f))
             print(f"処理が終わったので、元のファイル名にRENAME完了...{os.path.join(working_directory, f)}")
 
 
 main()
+
 if Source.PLATFORM.value == 'win32':
     input("\n\nすべての処理が完了しました...")
+else:
+    print("\n\nすべての処理が完了しました...")
+

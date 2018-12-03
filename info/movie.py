@@ -21,7 +21,7 @@ class Manager(object):
     def __init__(self):
         pass
 
-    def get_movie_list(self) -> iter:
+    def get_movie_list(self) -> list:
         """
         実質的にextension_filter関数のラッパー関数。
         media/以下のファイル一覧を含むジェネレータを返します。
@@ -29,7 +29,7 @@ class Manager(object):
         -----------
         Returns
         -----------
-            result: iter
+            result: list
         Raises
         -----------
             FileNotFoundError
@@ -43,7 +43,7 @@ class Manager(object):
             return result
 
     @staticmethod
-    def extension_filter(lists: list) -> iter:
+    def extension_filter(lists: list) -> list:
         """
         ALLOWED_EXTENSIONにあるファイル拡張子に基づいてフィルタリングして、ジェネレータを返す
         Parameters
@@ -53,7 +53,7 @@ class Manager(object):
 
         Returns
         -----------
-            allowed: iter
+            allowed: list
                 処理結果のリスト。
 
         """
@@ -61,7 +61,7 @@ class Manager(object):
         for extension in lists:
             if os.path.splitext(extension)[1] in Source.ALLOWED_EXTENSION.value:
                 allowed.append(extension)
-        yield allowed
+        return allowed
 
     def get_movie_info(self, path: str) -> dict:
         """
@@ -112,5 +112,10 @@ class Manager(object):
         """
         fixed = ""
         for n in name:
-            fixed += '_' if ord(n) > 128 else n
+            try:
+                fixed += '_' if ord(n) > 128 else n
+            except TypeError:
+                raise TypeError
+
         return fixed
+
