@@ -43,7 +43,10 @@ def main():
                 print(f'{f}は既にありますのでスキップします...')
 
         finally:
+            # ソースファイルに対するrename
             os.rename(os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name), os.path.join(Source.SOURCE_FILE_DIRECTORY.value, f))
+            # m3u8/ディレクトリに対するリネーム
+            os.rename(os.path.join(Source.DESTINATION_FILE_DIRECTORY.value, os.path.splitext(replace_file_name)[0]), os.path.join(Source.DESTINATION_FILE_DIRECTORY.value, f))
             print(f"処理が終わったので、元のファイル名にRENAME完了...{os.path.join(working_directory, f)}")
 
 
