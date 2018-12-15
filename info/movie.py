@@ -65,9 +65,17 @@ class Manager(object):
                 allowed.append(extension)
         return allowed
 
+    def select_vcodec(self, codec: str) -> str:
+        if 'h264' in codec:
+            return 'copy'
+        elif 'h265' in codec:
+            return 'libx264'
+        else:
+            return 'libx264'
+
     def get_movie_info(self, path: str) -> dict:
         """
-        ffmpeg -i "path"　で出力されるデータを辞書形式にパースして返します
+        ffmpeg -i "path"　で出力されるデータから、動画のコーデックに関する情報を抽出して返します
         """
         from pprint import pprint
         command = f"ffmpeg -i {path}".split(' ')
@@ -75,12 +83,8 @@ class Manager(object):
         stdout_data, stderr_data = information.communicate()
         for text in stderr_data.strip().split("\n"):
             if "Stream" in text:
-                if 'h264' in text:
-                    return 'copy'
-                elif 'h265' in text:
-                    return 'libx264'
-                else:
-                    return 'libx264'
+                return self.select_vcodec(codec=text)
+
     @staticmethod
     def make_directory(path: str) -> bool:
         """
