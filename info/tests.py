@@ -1,5 +1,6 @@
-from .movie import Source
-from .movie import Manager
+from movie import Source
+from movie import Manager
+from pprint import pprint
 import os
 import unittest
 
@@ -42,6 +43,10 @@ class TestRun(unittest.TestCase):
         working_directory = os.path.join(Source.SOURCE_FILE_DIRECTORY.value, Source.DESTINATION_FILE_DIRECTORY.value)
         print(working_directory)
 
+    def test_get_information(self):
+        manager = Manager()
+        path = "/tmp/昔の配信.mp4"
+        print(manager.get_movie_info(path=path).split("\n"))
 
-if __name__ == '__main__':
-    unittest.main()
+
+unittest.main()

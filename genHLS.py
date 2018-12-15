@@ -17,7 +17,7 @@ def main():
         except OSError as e:
             print(f'RENAME中にエラーが発生しました...\n対象ファイル: {f}\nエラー内容: {e}')
         else:
-            vcodec = 'libx264'
+            vcodec = manager.get_movie_info(path=os.path.join(Source.SOURCE_FILE_DIRECTORY.value, replace_file_name))
             acodec = 'copy'
             target_dir = os.path.join(working_directory, os.path.splitext(replace_file_name)[0])
 

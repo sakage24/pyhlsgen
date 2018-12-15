@@ -1,6 +1,8 @@
 import sys
 import os
 from enum import Enum
+from subprocess import Popen
+from subprocess import PIPE
 
 
 class Source(Enum):
@@ -67,8 +69,18 @@ class Manager(object):
         """
         ffmpeg -i "path"　で出力されるデータを辞書形式にパースして返します
         """
-        pass
-
+        from pprint import pprint
+        command = f"ffmpeg -i {path}".split(' ')
+        information = Popen(command, encoding="utf-8", shell=False, stdout=PIPE, stderr=PIPE)
+        stdout_data, stderr_data = information.communicate()
+        for text in stderr_data.strip().split("\n"):
+            if "Stream" in text:
+                if 'h264' in text:
+                    return 'copy'
+                elif 'h265' in text:
+                    return 'libx264'
+                else:
+                    return 'libx264'
     @staticmethod
     def make_directory(path: str) -> bool:
         """
@@ -118,4 +130,8 @@ class Manager(object):
                 raise TypeError
 
         return fixed
+
+if __name__ == '__main__':
+    man = Manager()
+    print(man.get_movie_info(path="/tmp/昔の配信.mp4"))
 
