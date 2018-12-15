@@ -23,7 +23,7 @@ class Manager(object):
     def __init__(self):
         pass
 
-    def get_movie_list(self) -> list:
+    def get_movie_list(self) -> iter:
         """
         実質的にextension_filter関数のラッパー関数。
         media/以下のファイル一覧を含むジェネレータを返します。
@@ -45,7 +45,7 @@ class Manager(object):
             return result
 
     @staticmethod
-    def extension_filter(lists: list) -> list:
+    def extension_filter(lists: list) -> iter:
         """
         ALLOWED_EXTENSIONにあるファイル拡張子に基づいてフィルタリングして、ジェネレータを返す
         Parameters
@@ -59,11 +59,10 @@ class Manager(object):
                 処理結果のリスト。
 
         """
-        allowed = []
         for extension in lists:
             if os.path.splitext(extension)[1] in Source.ALLOWED_EXTENSION.value:
-                allowed.append(extension)
-        return allowed
+                yield extension
+
 
     def select_vcodec(self, codec: str) -> str:
         if 'h264' in codec:
@@ -73,14 +72,14 @@ class Manager(object):
         else:
             return 'libx264'
 
-    def get_movie_info(self, path: str) -> dict:
+    def get_movie_info(self, path: str) -> str:
         """
         ffmpeg -i "path"　で出力されるデータから、動画のコーデックに関する情報を抽出して返します
         """
         from pprint import pprint
         command = f"ffmpeg -i {path}".split(' ')
         information = Popen(command, encoding="utf-8", shell=False, stdout=PIPE, stderr=PIPE)
-        stdout_data, stderr_data = information.communicate()
+        _, stderr_data = information.communicate()
         for text in stderr_data.strip().split("\n"):
             if "Stream" in text:
                 return self.select_vcodec(codec=text)
@@ -136,6 +135,5 @@ class Manager(object):
         return fixed
 
 if __name__ == '__main__':
-    man = Manager()
-    print(man.get_movie_info(path="/tmp/昔の配信.mp4"))
+    pass
 
