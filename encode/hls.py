@@ -5,7 +5,7 @@ from subprocess import Popen
 from subprocess import PIPE
 
 
-class Source(Enum):
+class Values(Enum):
     """
     グローバルで使える変数一覧
     """
@@ -38,7 +38,7 @@ class Manager(object):
                 対象ディレクトリが存在しない可能性が微レ存
         """
         try:
-            result = self.extension_filter(lists=os.listdir(Source.SOURCE_FILE_DIRECTORY.value))
+            result = self.extension_filter(lists=os.listdir(Values.SOURCE_FILE_DIRECTORY.value))
         except OSError:
             raise FileNotFoundError
         else:
@@ -60,7 +60,7 @@ class Manager(object):
 
         """
         for extension in lists:
-            if os.path.splitext(extension)[1] in Source.ALLOWED_EXTENSION.value:
+            if os.path.splitext(extension)[1] in Values.ALLOWED_EXTENSION.value:
                 yield extension
 
 
