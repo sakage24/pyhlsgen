@@ -10,7 +10,7 @@ class Values(Enum):
     グローバルで使える変数一覧
     """
     PLATFORM: str = sys.platform
-    ALLOWED_EXTENSION: tuple = ('.mp4', '.m4v', '.mkv', '.wmv', '.avi', '.flv', '.mov', '.mpeg', '.asf')
+    ALLOWED_EXTENSION: tuple = ('.mp4', '.m4v', '.mkv', '.wmv', '.avi', '.flv', '.mov', '.mpeg', '.asf', '.vob')
     SOURCE_FILE_DIRECTORY: str = '.'
     DESTINATION_FILE_DIRECTORY: str = 'm3u8'
 
