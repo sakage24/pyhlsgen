@@ -19,17 +19,28 @@ class Values(Enum):
 
 
 class CommandCreator(object):
-    def hls(self, source: str, target_dir: str,
+    def hls(self,
+            source: str,
+            target_dir: str,
             vcodec: str = "libx264",
-            acodec: str = "copy") -> list:
+            acodec: str = "copy",
+            threads: int = 2,
+            tag: str = "hvc1",
+            bitrate: int = 44100,
+            segment_time: int = 10,
+            pix_fmt: str = "yuv420p",
+            ) -> list:
+
         comm = f"ffmpeg -i "\
-            f"{os.path.join(Values.SOURCE_FILE_DIRECTORY.value, source)} "\
-            f"-max_muxing_queue_size 1024 "\
-            f"-c:v {vcodec} -tag:v hvc1 -vbsf h264_mp4toannexb "\
-            f"-c:a {acodec} -ar 44100 -pix_fmt yuv420p -map 0:0 -map 0:1 "\
-            f"-f segment -segment_format mpegts -segment_time 10 "\
-            f"-segment_list {os.path.join(target_dir, 'output.m3u8')} " \
-            f"{os.path.join(target_dir, 'stream-%06d.ts')}"
+               f"{os.path.join(Values.SOURCE_FILE_DIRECTORY.value, source)} "\
+               f"-max_muxing_queue_size 1024 "\
+               f"-c:v {vcodec} -tag:v {tag} -vbsf h264_mp4toannexb "\
+               f"-pix_fmt {pix_fmt} -map 0:0 -map 0:1 "\
+               f"-c:a {acodec} -ar {bitrate} "\
+               f"-threads {threads} "\
+               f"-f segment -segment_format mpegts -segment_time {segment_time} "\
+               f"-segment_list {os.path.join(target_dir, 'output.m3u8')} " \
+               f"{os.path.join(target_dir, 'stream-%06d.ts')}"
         return comm.split(" ")
 
 

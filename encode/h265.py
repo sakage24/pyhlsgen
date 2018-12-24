@@ -1,3 +1,18 @@
 class CommandCreator(object):
-    def h265(self, source: str, dest: str, vcodec: str = "libx265", acodec: str = "copy", tag: str = "hvc1", bitrate: int = 44100, pix_fmt: str = "yuv420p") -> list:
-        return f"ffmpeg -i {source} -c:v {vcodec} -tag:v {tag} -c:a {acodec} -ar {bitrate} -pix_fmt {pix_fmt} {dest}".split(" ")
+    def h265(self,
+             source: str,
+             dest: str,
+             threads: int = 2,
+             vcodec: str = "libx265",
+             acodec: str = "copy",
+             tag: str = "hvc1",
+             bitrate: int = 44100,
+             pix_fmt: str = "yuv420p",
+             ) -> list:
+
+        command = f"ffmpeg -i {source} -c:v {vcodec} -tag:v {tag} "\
+                  f"-c:a {acodec} -ar {bitrate} "\
+                  f"-threads {threads} "\
+                  f"-pix_fmt {pix_fmt} "\
+                  f"{dest}"
+        return command.split(" ")
