@@ -22,18 +22,22 @@ def main():
     hls = hls_command()
     h265 = h265_command()
     output_directory = os.path.join(
-        Values.SOURCE_FILE_DIRECTORY.value, Values.DESTINATION_FILE_DIRECTORY.value)
+        Values.SOURCE_FILE_DIRECTORY.value,
+        Values.DESTINATION_FILE_DIRECTORY.value)
 
     for f in manager.get_movie_list():
         vcodec = manager.get_movie_info(path=os.path.join(
             Values.SOURCE_FILE_DIRECTORY.value, f))
         acodec = 'copy'
-        target_dir = os.path.join(output_directory, os.path.splitext(f)[0])
+        target_dir = os.path.join(output_directory,
+                                  os.path.splitext(f)[0])
 
         if not os.path.exists(target_dir):
             if arg_vcodec:
-                comm = h265.h265(source=f, dest=os.path.splitext(f)[
-                                 0] + "_h265.mp4")
+                comm = h265.h265(source=f,
+                                 dest=os.path.splitext(f)[0] + "_h265.mp4",
+                                 vcodec=arg_vcodec,
+                                 acodec=arg_acodec)
             else:
                 manager.make_directory(
                     path=Values.DESTINATION_FILE_DIRECTORY.value)
