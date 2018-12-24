@@ -25,7 +25,7 @@ def main():
 
         if not os.path.exists(target_dir):
             if arg_codec:
-                comm = h265.h265(source=f, dest=os.path.splitext(f)[0] + ".mp4")
+                comm = h265.h265(source=f, dest=os.path.splitext(f)[0] + "_h265.mp4")
             else:
                 manager.make_directory(path=Values.DESTINATION_FILE_DIRECTORY.value)
                 manager.make_directory(path=target_dir)
