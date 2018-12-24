@@ -6,12 +6,34 @@ This program is a wrapper program of [ffmpeg](https://ffmpeg.org/). Therefore, y
 
 ## Usage
 
+### * -> m3u8
+
 1. Put in the source files in the same directory as the sctipts.
 1. run script.
     - `py genhls.py`
     - run backgrounds
         - `nohup python3 genhls.py &`
 1. `m3u8/YOUR_SOURCE_FILES` directory will be generated.
+
+### * -> convert to other codecs
+
+##### syntax
+
+`py genhls.py "video_codec" "audio_codec(Optional)"`
+
+#### example
+
+##### convert to libx265(audio codec would copy.)
+
+`py genhls.py libx265`
+
+##### convert to libx265(audio codec would copy.)
+
+`py genhls.py libx265 copy`
+
+##### convert to libx264 and ac3 codecs.
+
+`py genhls.py libx264 ac3`
 
 ## convert flow
 

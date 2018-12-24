@@ -1,8 +1,12 @@
+from os.path import exists
+from os import chmod
+from os import makedirs
 from sys import argv
 
 
 class Operation(object):
-    def get_args(self, args: list = argv) -> tuple:
+    @staticmethod
+    def get_codecs(args: list = argv) -> tuple:
         if len(args) > 2:
             vcodec = args[1]
             acodec = args[2]
@@ -15,7 +19,7 @@ class Operation(object):
         return (vcodec, acodec)
 
     @staticmethod
-    def rename_space_to_under(name: str) -> str:
+    def change_to_underbar(name: str) -> str:
         """
         エラーが出そうな文字列を'_'に置換して返す
 
@@ -31,8 +35,7 @@ class Operation(object):
         chars: tuple = (
             ' ', '　', '！', '？',
             '＿', '（', '）', '～',
-            'ー', '＝', '￥', '\\',
-            '【', '】',
+            '￥', '\\', '【', '】',
         )
         fixed = ""
         for n in name:
@@ -42,3 +45,30 @@ class Operation(object):
                 raise TypeError
 
         return fixed
+
+    @staticmethod
+    def make_directory(path: str) -> bool:
+        """
+        渡されたpathに対してos.makedirs()を実行します。
+        Parameters
+        ----------
+            path: str
+                作成するディレクトリのパス
+        Returns
+        ----------
+            True
+                ディレクトリの作成、権限の変更が成功した
+            False
+                上記が失敗した場合、パスが存在しない場合
+
+        """
+        if not exists(path):
+            try:
+                makedirs(path)
+                chmod(path, 0o705)
+            except OSError:
+                return False
+            else:
+                return True
+        else:
+            return False

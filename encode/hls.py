@@ -80,7 +80,8 @@ class Manager(object):
 
         """
         for extension in lists:
-            if os.path.splitext(extension)[1] in Values.ALLOWED_EXTENSION.value:
+            if os.path.splitext(extension)[1] in \
+               Values.ALLOWED_EXTENSION.value:
                 yield extension
 
     def select_vcodec(self, codec: str) -> str:
@@ -102,33 +103,6 @@ class Manager(object):
         for text in stderr_data.strip().split("\n"):
             if "Stream" in text:
                 return self.select_vcodec(codec=text)
-
-    @staticmethod
-    def make_directory(path: str) -> bool:
-        """
-        渡されたpathに対してos.makedirs()を実行します。
-        Parameters
-        ----------
-            path: str
-                作成するディレクトリのパス
-        Returns
-        ----------
-            True
-                ディレクトリの作成、権限の変更が成功した
-            False
-                上記が失敗した場合、パスが存在しない場合
-
-        """
-        if not os.path.exists(path):
-            try:
-                os.makedirs(path)
-                os.chmod(path, 0o705)
-            except OSError:
-                return False
-            else:
-                return True
-        else:
-            return False
 
 
 if __name__ == '__main__':
