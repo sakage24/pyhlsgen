@@ -130,29 +130,6 @@ class Manager(object):
         else:
             return False
 
-    @staticmethod
-    def get_replace_character(name: str) -> str:
-        """
-        ascii文字列以外は'_'に置換して返す
-
-         Parameters
-        ----------
-        name: str
-            変換前のファイル名。
-        Returns
-        -------
-        fixed: str
-            変換後のファイル名。
-        """
-        fixed = ""
-        for n in name:
-            try:
-                fixed += '_' if ord(n) > 128 else n
-            except TypeError:
-                raise TypeError
-
-        return fixed
-
 
 if __name__ == '__main__':
     pass

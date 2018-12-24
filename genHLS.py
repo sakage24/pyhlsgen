@@ -5,22 +5,16 @@ from encode.hls import Values
 from encode.hls import Manager
 from encode.hls import CommandCreator as hls_command
 from encode.h265 import CommandCreator as h265_command
+from encode.files import Operation
 
 
 def main():
-    if len(sys.argc) > 2:
-        arg_vcodec = sys.argv[1]
-        arg_acodec = sys.argv[2]
-    elif len(sys.argv) > 1:
-        arg_vcodec = sys.argv[1]
-        arg_acodec = sys.argv[2]
-    else:
-        arg_vcodec = ""
-        arg_acodec = ""
-
+    operation = Operation()
     manager = Manager()
     hls = hls_command()
     h265 = h265_command()
+    arg_vcodec, arg_acodec = Operation.get_args(args=sys.argv)
+
     output_directory = os.path.join(
         Values.SOURCE_FILE_DIRECTORY.value,
         Values.DESTINATION_FILE_DIRECTORY.value)
@@ -63,3 +57,4 @@ if Values.PLATFORM.value == 'win32':
     input("\n\nすべての処理が完了しました...")
 else:
     print("\n\nすべての処理が完了しました...")
+
