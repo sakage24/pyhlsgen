@@ -16,7 +16,6 @@ def main():
     manager = Manager()
     hls = hls_command()
     h265= h265_command()
-    manager.make_directory(path=Values.DESTINATION_FILE_DIRECTORY.value)
     working_directory = os.path.join(Values.SOURCE_FILE_DIRECTORY.value, Values.DESTINATION_FILE_DIRECTORY.value)
 
     for f in manager.get_movie_list():
@@ -28,6 +27,7 @@ def main():
             if arg_codec:
                 comm = h265.h265(source=f, dest=os.path.splitext(f)[0] + ".mp4")
             else:
+                manager.make_directory(path=Values.DESTINATION_FILE_DIRECTORY.value)
                 manager.make_directory(path=target_dir)
                 comm = hls.hls(source=f, target_dir=target_dir, vcodec=vcodec, acodec=acodec)
 

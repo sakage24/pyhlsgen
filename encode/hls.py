@@ -15,7 +15,7 @@ class Values(Enum):
     DESTINATION_FILE_DIRECTORY: str = 'm3u8'
 
 class CommandCreator(object):
-    def hls(self, source: str, target_dir: str, vcodec="libx264", acodec="copy"):
+    def hls(self, source: str, target_dir: str, vcodec: str="libx264", acodec: str="copy") -> list:
         comm = f"ffmpeg -i {os.path.join(Values.SOURCE_FILE_DIRECTORY.value, source)} "\
             f"-max_muxing_queue_size 1024 -c:v {vcodec} -tag:v hvc1 -vbsf h264_mp4toannexb "\
             f"-c:a {acodec} -ar 44100 -pix_fmt yuv420p -map 0:0 -map 0:1 "\
