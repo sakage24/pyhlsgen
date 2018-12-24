@@ -8,28 +8,38 @@ from encode.h265 import CommandCreator as h265_command
 
 
 def main():
-    if len(sys.argv) > 1:
-        arg_codec = sys.argv[1]
+    if len(sys.argc) > 2:
+        arg_vcodec = sys.argv[1]
+        arg_acodec = sys.argv[2]
+    elif len(sys.argv) > 1:
+        arg_vcodec = sys.argv[1]
+        arg_acodec = sys.argv[2]
     else:
-        arg_codec = ""
+        arg_vcodec = ""
+        arg_acodec = ""
 
     manager = Manager()
     hls = hls_command()
-    h265= h265_command()
-    output_directory = os.path.join(Values.SOURCE_FILE_DIRECTORY.value, Values.DESTINATION_FILE_DIRECTORY.value)
+    h265 = h265_command()
+    output_directory = os.path.join(
+        Values.SOURCE_FILE_DIRECTORY.value, Values.DESTINATION_FILE_DIRECTORY.value)
 
     for f in manager.get_movie_list():
-        vcodec = manager.get_movie_info(path=os.path.join(Values.SOURCE_FILE_DIRECTORY.value, f))
+        vcodec = manager.get_movie_info(path=os.path.join(
+            Values.SOURCE_FILE_DIRECTORY.value, f))
         acodec = 'copy'
         target_dir = os.path.join(output_directory, os.path.splitext(f)[0])
 
         if not os.path.exists(target_dir):
-            if arg_codec:
-                comm = h265.h265(source=f, dest=os.path.splitext(f)[0] + "_h265.mp4")
+            if arg_vcodec:
+                comm = h265.h265(source=f, dest=os.path.splitext(f)[
+                                 0] + "_h265.mp4")
             else:
-                manager.make_directory(path=Values.DESTINATION_FILE_DIRECTORY.value)
+                manager.make_directory(
+                    path=Values.DESTINATION_FILE_DIRECTORY.value)
                 manager.make_directory(path=target_dir)
-                comm = hls.hls(source=f, target_dir=target_dir, vcodec=vcodec, acodec=acodec)
+                comm = hls.hls(source=f, target_dir=target_dir,
+                               vcodec=vcodec, acodec=acodec)
 
             if Values.PLATFORM.value == 'win32':
                 subprocess.run(['chcp', '65001'], shell=True, encoding='utf-8')
@@ -49,4 +59,3 @@ if Values.PLATFORM.value == 'win32':
     input("\n\nすべての処理が完了しました...")
 else:
     print("\n\nすべての処理が完了しました...")
-
