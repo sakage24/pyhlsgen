@@ -1,5 +1,7 @@
 from subprocess import run
-import os
+from os import makedirs
+from os.path import exists
+from os.path import join
 
 
 class Image(object):
@@ -14,12 +16,12 @@ class Image(object):
         command = f"ffmpeg -i {source} "\
                   f"-ss {ss} -r {frame_per_second} "\
                   f"-f image2 "\
-                  f"{os.path.join(output_dir, output_file_name)}"
+                  f"{join(output_dir, output_file_name)}"
         command = command.split(" ")
 
         try:
-            if not self.check_exist_dir(dst=output_dir):
-                os.makedirs(output_dir, mode=0o700)
+            if not exists(path=output_dir):
+                makedirs(output_dir, mode=0o700)
         except OSError:
             return False
         else:
@@ -29,12 +31,6 @@ class Image(object):
                 run(command, shell=True, encoding='utf-8')
             else:
                 return False
-
-    def check_exist_dir(self, dst: str) -> bool:
-        if os.path.exists(dst):
-            return True
-        else:
-            return False
 
 
 if __name__ == '__main__':
