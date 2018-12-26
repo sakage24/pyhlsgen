@@ -35,4 +35,6 @@ class Image(object):
 
 if __name__ == '__main__':
     image = Image()
-    image.create_thumbnail(source="衣装がずれてブラジャー丸出しダンス_-_TOKYO_Motion_libx265.mp4")
+    image.create_thumbnail(
+        source="",
+    )
