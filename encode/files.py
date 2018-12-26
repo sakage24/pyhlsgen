@@ -21,7 +21,7 @@ class Operation(object):
     @staticmethod
     def change_to_underbar(name: str) -> str:
         """
-        エラーが出そうな文字列を'_'に置換して返す
+        エラーが出そうな文字列を置換して返す
 
          Parameters
         ----------
@@ -32,18 +32,21 @@ class Operation(object):
         fixed: str
             変換後のファイル名。
         """
-        chars: tuple = (
-            ' ', '　', '！', '？',
-            '＿', '（', '）', '～',
-            '￥', '\\', '【', '】',
-        )
-        fixed = ""
+        chars: tuple = (' ', '　', '＿', '\\', '￥',)
+        fixed: str = ""
+
         for n in name:
             try:
-                fixed += '_' if n in chars else n
+                if n in chars:
+                    fixed += '_'
+                elif n == '（':
+                    fixed += '('
+                elif n == '）':
+                    fixed += ')'
+                elif n == '～':
+                    fixed += '~'
             except TypeError:
                 raise TypeError
-
         return fixed
 
     @staticmethod
