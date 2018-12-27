@@ -19,7 +19,7 @@ class Operation(object):
         return (vcodec, acodec)
 
     @staticmethod
-    def change_to_underbar(name: str) -> str:
+    def escape_chars(name: str) -> str:
         """
         エラーが出そうな文字列を置換して返す
 
@@ -39,13 +39,17 @@ class Operation(object):
             try:
                 if n in chars:
                     fixed += '_'
-                elif n == '（':
+                elif n == '（' or n == '【':
                     fixed += '('
-                elif n == '）':
+                elif n == '）' or n == '】':
                     fixed += ')'
                 elif n == '～':
                     fixed += '~'
+                else:
+                    fixed += n
+
             except TypeError:
+                print(fixed)
                 raise TypeError
         return fixed
 

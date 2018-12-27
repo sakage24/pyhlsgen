@@ -20,11 +20,11 @@ def main():
         Values.DESTINATION_FILE_DIRECTORY.value)
 
     for f in manager.get_movie_list():
-        after_file_name = operation.change_to_underbar(name=f)
+        after_file_name = operation.escape_chars(name=f)
         try:
             os.rename(src=f, dst=after_file_name)
         except OSError:
-            sys.exit(0)
+            raise OSError
         else:
             f = after_file_name
             vcodec = manager.get_movie_info(path=os.path.join(
@@ -32,8 +32,7 @@ def main():
             acodec = 'copy'
 
             if arg_vcodec:
-                if os.path.exists(os.path.splitext(f)[0] +\
-                   f"_{arg_vcodec}.mp4"):
+                if os.path.exists(os.path.splitext(f)[0] + f"_{arg_vcodec}.mp4"):
                     print("すでに存在するため、スキップします...")
                 comm = h265.h265(source=f,
                                  dest=os.path.splitext(f)[0] + f"_{arg_vcodec}.mp4",
