@@ -14,16 +14,48 @@ class Operation(object):
             vcodec = args[1]
             acodec = 'copy'
         else:
-            vcodec = ''
-            acodec = ''
+            vcodec = 'copy'
+            acodec = 'copy'
         return (vcodec, acodec)
+
+    @staticmethod
+    def get_exts(codec: str) -> str:
+        codecs = {
+            'flv1': '.flv',
+            'h264': '.mp4',
+            'h265': '.mp4',
+            'hevc': '.mp4',
+            'hvc1': '.mp4',
+            'libx264': '.mp4',
+            'libx265': '.mp4',
+            'mjpeg': '.jpeg',
+            'mpeg1video': '.mpg',
+            'mpeg2video': '.vob',
+            'msvideo1': '.avi',
+            'vp3': '.mkv',
+            'vp6': '.mkv',
+            'vp6a': '.flv',
+            'vp6f': '.flv',
+            'vp7': '.avi',
+            'vp8': '.webm',
+            'vp9': '.webm',
+            'wmv1': '.wmv',
+            'wmv2': '.wmv',
+            'wmv3': '.wmv',
+            'hls': '.m3u8',
+        }
+
+        if codec in codecs:
+            return codecs[codec]
+        else:
+            return 'copy'
 
     @staticmethod
     def escape_chars(name: str) -> str:
         """
         エラーが出そうな文字列を置換して返す
 
-         Parameters
+        Parameters
         ----------
         name: str
             変換前のファイル名。

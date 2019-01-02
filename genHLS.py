@@ -13,7 +13,8 @@ def main():
     manager = Manager()
     hls = hls_command()
     h265 = h265_command()
-    arg_vcodec, arg_acodec = Operation.get_codecs(args=sys.argv)
+    vcodec, acodec = Operation.get_codecs(args=sys.argv)
+    ext = operation.get_exts(codec=vcodec)
 
     output_directory = os.path.join(
         Values.SOURCE_FILE_DIRECTORY.value,
@@ -27,17 +28,15 @@ def main():
             raise OSError
         else:
             f = after_file_name
-            vcodec = manager.get_movie_info(path=os.path.join(
-                Values.SOURCE_FILE_DIRECTORY.value, f))
-            acodec = 'copy'
 
-            if arg_vcodec:
-                if os.path.exists(os.path.splitext(f)[0] + f"_{arg_vcodec}.mp4"):
+            if vcodec:
+                if os.path.exists(os.path.splitext(f)[0] + f"_{vcodec}{ext}"):
                     print("すでに存在するため、スキップします...")
                 comm = h265.h265(source=f,
-                                 dest=os.path.splitext(f)[0] + f"_{arg_vcodec}.mp4",
-                                 vcodec=arg_vcodec,
-                                 acodec=arg_acodec,)
+                                 dest=os.path.splitext(
+                                     f)[0] + f"_{vcodec}{ext}",
+                                 vcodec=vcodec,
+                                 acodec=acodec,)
             else:
                 target_dir = os.path.join(output_directory,
                                           os.path.splitext(f)[0])
