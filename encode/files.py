@@ -140,7 +140,7 @@ class Operation(object):
                 if n in chars:
                     fixed += '_'
                 elif 0x2600 <= ord(n) <= 0x26ff or n == '？':
-                    fixed += '?'
+                    fixed += '_'
                 elif n == '（' or n == '【':
                     fixed += '('
                 elif n == '）' or n == '】':
