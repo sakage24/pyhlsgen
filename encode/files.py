@@ -77,6 +77,8 @@ class Operation(object):
                     fixed += ')'
                 elif n == '～':
                     fixed += '~'
+                elif n == '＝':
+                    fixed += '='
                 else:
                     fixed += n
 
