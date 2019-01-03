@@ -69,7 +69,9 @@ class Operation(object):
 
         for n in name:
             try:
-                if n in chars:
+                if 0x2600 <= ord(n) <= 0x26ff:
+                    fixed += '?'
+                elif n in chars:
                     fixed += '_'
                 elif n == '（' or n == '【':
                     fixed += '('
@@ -79,12 +81,17 @@ class Operation(object):
                     fixed += '~'
                 elif n == '＝':
                     fixed += '='
+                elif n == '×':
+                    fixed += 'x'
+                elif n == '＃':
+                    fixed += '#'
+                elif n == '':
+                    fixed += '#'
                 else:
                     fixed += n
 
-            except TypeError:
-                print(fixed)
-                raise TypeError
+            except TypeError as e:
+                print(e)
         return fixed
 
     @staticmethod
