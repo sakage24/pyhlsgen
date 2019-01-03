@@ -82,7 +82,7 @@ class Operation(object):
             vcodec = args[1]
             acodec = 'copy'
         else:
-            vcodec = 'hls'
+            vcodec = 'copy'
             acodec = 'copy'
         return (vcodec, acodec)
 
@@ -181,7 +181,7 @@ class Operation(object):
         if not exists(path):
             try:
                 makedirs(path)
-                chmod(path, 0o705)
+                chmod(path, 0o700)
             except OSError:
                 print(f"{path}ディレクトリの作成に失敗しました...")
                 return False
