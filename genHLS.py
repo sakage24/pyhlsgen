@@ -18,7 +18,8 @@ def main():
 
     output_directory = os.path.join(
         Values.SOURCE_FILE_DIRECTORY.value,
-        Values.DESTINATION_FILE_DIRECTORY.value)
+        Values.DESTINATION_FILE_DIRECTORY.value,
+    )
 
     for f in manager.get_movie_list():
         after_file_name = operation.escape_chars(name=f)
@@ -28,32 +29,36 @@ def main():
             raise OSError
         else:
             f = after_file_name
-
             if vcodec:
                 if os.path.exists(os.path.splitext(f)[0] + f"_{vcodec}{ext}"):
                     print("すでに存在するため、スキップします...")
-                comm = h265.h265(source=f,
-                                 dest=os.path.splitext(
-                                     f)[0] + f"_{vcodec}{ext}",
-                                 vcodec=vcodec,
-                                 acodec=acodec,)
+                comm = h265.h265(
+                    source=f,
+                    dest=os.path.splitext(f)[0] + f"_{vcodec}{ext}",
+                    vcodec=vcodec,
+                    acodec=acodec,
+                )
             else:
                 target_dir = os.path.join(output_directory,
-                                          os.path.splitext(f)[0])
+                                          os.path.splitext(f)[0],
+                                          )
 
                 operation.make_directory(path=target_dir)
-                comm = hls.hls(source=f, target_dir=target_dir,
-                               vcodec=vcodec, acodec=acodec)
+                comm = hls.hls(source=f,
+                               target_dir=target_dir,
+                               vcodec=vcodec,
+                               acodec=acodec,
+                               )
 
-            if Values.PLATFORM.value == 'win32':
-                subprocess.run(['chcp', '65001'],
-                               shell=True, encoding='utf-8')
-                subprocess.run(comm, shell=True, encoding='utf-8')
-            elif Values.PLATFORM.value == 'linux':
-                subprocess.run(comm, shell=False, encoding='utf-8')
-            else:
-                print('対応していないディストリビューションで実行しています...\nプログラムを終了します。')
-                sys.exit(1)
+                if Values.PLATFORM.value == 'win32':
+                    subprocess.run(['chcp', '65001'],
+                                   shell=True, encoding='utf-8')
+                    subprocess.run(comm, shell=True, encoding='utf-8')
+                elif Values.PLATFORM.value == 'linux':
+                    subprocess.run(comm, shell=False, encoding='utf-8')
+                else:
+                    print('対応していないディストリビューションで実行しています...\nプログラムを終了します。')
+                    sys.exit(1)
 
 
 main()
