@@ -1,10 +1,10 @@
 import os
 import sys
 import subprocess
-from encode.hls import Values
-from encode.hls import Manager
 from encode.hls import CommandCreator as hls_command
 from encode.h265 import CommandCreator as h265_command
+from encode.files import Values
+from encode.files import Manager
 from encode.files import Operation
 
 
@@ -15,7 +15,6 @@ def main():
     h265 = h265_command()
     vcodec, acodec = Operation.get_codecs(args=sys.argv)
     ext = operation.get_exts(codec=vcodec)
-
     output_directory = os.path.join(
         Values.SOURCE_FILE_DIRECTORY.value,
         Values.DESTINATION_FILE_DIRECTORY.value,
@@ -29,7 +28,7 @@ def main():
             raise OSError
         else:
             f = after_file_name
-            if vcodec:
+            if len(sys.argv) > 1:
                 if os.path.exists(os.path.splitext(f)[0] + f"_{vcodec}{ext}"):
                     print("すでに存在するため、スキップします...")
                 comm = h265.h265(
@@ -46,19 +45,18 @@ def main():
                 operation.make_directory(path=target_dir)
                 comm = hls.hls(source=f,
                                target_dir=target_dir,
-                               vcodec=vcodec,
                                acodec=acodec,
                                )
 
-                if Values.PLATFORM.value == 'win32':
-                    subprocess.run(['chcp', '65001'],
-                                   shell=True, encoding='utf-8')
-                    subprocess.run(comm, shell=True, encoding='utf-8')
-                elif Values.PLATFORM.value == 'linux':
-                    subprocess.run(comm, shell=False, encoding='utf-8')
-                else:
-                    print('対応していないディストリビューションで実行しています...\nプログラムを終了します。')
-                    sys.exit(1)
+            if Values.PLATFORM.value == 'win32':
+                subprocess.run(['chcp', '65001'],
+                               shell=True, encoding='utf-8')
+                subprocess.run(comm, shell=True, encoding='utf-8')
+            elif Values.PLATFORM.value == 'linux':
+                subprocess.run(comm, shell=False, encoding='utf-8')
+            else:
+                print('対応していないディストリビューションで実行しています...\nプログラムを終了します。')
+                sys.exit(1)
 
 
 main()

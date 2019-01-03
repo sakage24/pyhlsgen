@@ -1,7 +1,75 @@
+import os
 from os.path import exists
 from os import chmod
 from os import makedirs
 from sys import argv
+from sys import platform
+from enum import Enum
+
+
+class Values(Enum):
+    """
+    グローバルで使える変数一覧
+    """
+    PLATFORM: str = platform
+    ALLOWED_EXTENSION: tuple = (
+        '.mp4', '.m4v', '.mkv', '.wmv',
+        '.avi', '.flv', '.mov', '.mpeg',
+        '.asf', '.vob')
+    SOURCE_FILE_DIRECTORY: str = '.'
+    DESTINATION_FILE_DIRECTORY: str = 'm3u8'
+
+
+class Manager(object):
+    """
+    メディアファイルの取得、保存用のフォルダ作成などいろいろやる
+
+    """
+
+    def __init__(self):
+        pass
+
+    def get_movie_list(self) -> iter:
+        """
+        実質的にextension_filter関数のラッパー関数。
+        media/以下のファイル一覧を含むジェネレータを返します。
+        Parameters
+        -----------
+        Returns
+        -----------
+            result: list
+        Raises
+        -----------
+            FileNotFoundError
+                対象ディレクトリが存在しない可能性が微レ存
+        """
+        try:
+            result = self.extension_filter(
+                lists=os.listdir(Values.SOURCE_FILE_DIRECTORY.value))
+        except OSError:
+            raise FileNotFoundError
+        else:
+            return result
+
+    @staticmethod
+    def extension_filter(lists: list) -> iter:
+        """
+        ALLOWED_EXTENSIONにあるファイル拡張子に基づいてフィルタリングして、ジェネレータを返す
+        Parameters
+        ------------
+            lists: list
+                処理前のリスト。
+
+        Returns
+        -----------
+            allowed: list
+                処理結果のリスト。
+
+        """
+        for extension in lists:
+            if os.path.splitext(extension)[1] in \
+               Values.ALLOWED_EXTENSION.value:
+                yield extension
 
 
 class Operation(object):
@@ -14,7 +82,7 @@ class Operation(object):
             vcodec = args[1]
             acodec = 'copy'
         else:
-            vcodec = 'copy'
+            vcodec = 'hls'
             acodec = 'copy'
         return (vcodec, acodec)
 
@@ -69,10 +137,10 @@ class Operation(object):
 
         for n in name:
             try:
-                if 0x2600 <= ord(n) <= 0x26ff:
-                    fixed += '?'
-                elif n in chars:
+                if n in chars:
                     fixed += '_'
+                elif 0x2600 <= ord(n) <= 0x26ff or n == '？':
+                    fixed += '?'
                 elif n == '（' or n == '【':
                     fixed += '('
                 elif n == '）' or n == '】':
@@ -85,8 +153,8 @@ class Operation(object):
                     fixed += 'x'
                 elif n == '＃':
                     fixed += '#'
-                elif n == '':
-                    fixed += '#'
+                elif n == '！':
+                    fixed += '!'
                 else:
                     fixed += n
 
@@ -115,8 +183,10 @@ class Operation(object):
                 makedirs(path)
                 chmod(path, 0o705)
             except OSError:
+                print(f"{path}ディレクトリの作成に失敗しました...")
                 return False
             else:
                 return True
         else:
+            print(f"{path}はすでに存在します...")
             return False
