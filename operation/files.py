@@ -1,14 +1,73 @@
-import os
 from os.path import exists
+from os.path import join
+from os.path import splitext
+from os import listdir
 from os import chmod
+from os import scandir
 from os import makedirs
 from sys import argv
 from sys import platform
 from enum import Enum
+from subprocess import run
 
 
 class Concat(object):
-    pass
+    def __get_movie_list(self, path: str = '.') -> iter:
+        """
+        結合する動画一覧を返す
+        """
+        with scandir(path) as it:
+            for entry in it:
+                if not entry.name.startswith('.')\
+                   and entry.is_file()\
+                   and splitext(entry.name)[1] in Values.ALLOWED_EXTENSION.value:
+                       yield (entry.name)
+
+    def write_concat_text(self, path: str = '.', list_name: str = 'concat_files.txt'):
+        with open(file=list_name, mode='wt', encoding='utf-8') as fp:
+            movie = []
+            for i in self.__get_movie_list(path=path):
+                movie.append(join(path, i))
+
+            # 昇順でソートしてからテキストファイルに書き込みする
+            [fp.write(f"file '{i}'\n") for i in sorted(movie)]
+        try:
+            chmod(list_name, 0o704)
+        except OSError:
+            pass
+
+    def run(self,
+            path: str = '.',
+            list_name: str = 'concat_file.txt',
+            output_name: str = 'joined.mp4',
+            vcodec: str = 'libx265',
+            acodec: str = 'copy',
+            threads: int = 2,
+            tag: str = "hvc1",
+            bitrate: int = 44100,
+            segment_time: int = 10,
+            pix_fmt: str = "yuv420p",
+            ):
+        self.write_concat_text(path=path, list_name=list_name)
+        command = f"""
+                    ffmpeg -safe 0 -f concat -i {list_name} \
+                    -c:v {vcodec} -tag:v {tag} \
+                    -pix_fmt {pix_fmt} \
+                    -c:a {acodec} -ar {bitrate} \
+                    -c:s copy \
+                    -map 0:v -map 0:a -map 0:s? \
+                    -threads {threads} \
+                    {output_name}
+                   """
+
+        # リスト内の空白、改行コードを削除する。文字列に\nがあれば空白に置換する
+        filled = [i.replace('\n', '') for i in command.split(" ") if i and i != '\n']
+        if Values.PLATFORM.value.lower() == 'linux':
+            run(filled, shell=False, encoding='utf-8')
+        elif Values.PLATFORM.value.lower() == 'win32':
+            run(filled, shell=True, encoding='utf-8')
+
+        print(filled)
 
 
 class Values(Enum):
@@ -48,8 +107,7 @@ class Manager(object):
                 対象ディレクトリが存在しない可能性が微レ存
         """
         try:
-            result = self.extension_filter(
-                lists=os.listdir(Values.SOURCE_FILE_DIRECTORY.value))
+            result = self.extension_filter(lists=listdir(Values.SOURCE_FILE_DIRECTORY.value))
         except OSError:
             raise FileNotFoundError
         else:
@@ -71,7 +129,7 @@ class Manager(object):
 
         """
         for extension in lists:
-            if os.path.splitext(extension)[1] in \
+            if splitext(extension)[1] in \
                Values.ALLOWED_EXTENSION.value:
                 yield extension
 
