@@ -102,3 +102,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# for ffmpeg concat
+
+/operation/concat_file.txt
+/operation/*.mp4
+/operation/nohup.out
+

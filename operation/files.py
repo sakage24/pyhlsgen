@@ -67,8 +67,6 @@ class Concat(object):
         elif Values.PLATFORM.value.lower() == 'win32':
             run(filled, shell=True, encoding='utf-8')
 
-        print(filled)
-
 
 class Values(Enum):
     """
