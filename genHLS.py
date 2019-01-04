@@ -3,9 +3,9 @@ import sys
 import subprocess
 from encode.hls import CommandCreator as hls_command
 from encode.h265 import CommandCreator as h265_command
-from encode.files import Values
-from encode.files import Manager
-from encode.files import Operation
+from operation.files import Values
+from operation.files import Manager
+from operation.files import Operation
 
 
 def main():

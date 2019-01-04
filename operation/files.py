@@ -7,6 +7,10 @@ from sys import platform
 from enum import Enum
 
 
+class Concat(object):
+    pass
+
+
 class Values(Enum):
     """
     グローバルで使える変数一覧
