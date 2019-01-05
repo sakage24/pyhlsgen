@@ -44,13 +44,14 @@ class Concat(object):
             acodec: str = 'copy',
             threads: int = 2,
             tag: str = "hvc1",
+            fps: int = 24,
             bitrate: int = 44100,
             pix_fmt: str = "yuv420p",
             ):
         self.write_concat_text(path=path, list_name=list_name)
         command = f"""
                     ffmpeg -safe 0 -f concat -i {list_name} \
-                    -c:v {vcodec} -tag:v {tag} \
+                    -c:v {vcodec} -tag:v {tag} -r {fps} \
                     -pix_fmt {pix_fmt} \
                     -c:a {acodec} -ar {bitrate} \
                     -c:s copy \
