@@ -3,8 +3,8 @@ class CommandCreator(object):
              source: str,
              dest: str,
              threads: int = 2,
-             size: str = '640x360',
-             fps: int = 24,
+             size: str = '720x480',
+             fps: int = 30,
              vcodec: str = "libx265",
              acodec: str = "copy",
              tag: str = "hvc1",
@@ -13,7 +13,7 @@ class CommandCreator(object):
              ) -> list:
 
         command = f"ffmpeg -i {source} -c:v {vcodec} -tag:v {tag} "\
-                  f"-s {size} -r {fps}"\
+                  f"-s {size} -r {fps} "\
                   f"-c:a {acodec} -ar {bitrate} "\
                   f"-threads {threads} "\
                   f"-pix_fmt {pix_fmt} "\
