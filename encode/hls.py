@@ -6,6 +6,8 @@ class CommandCreator(object):
     def hls(self,
             source: str,
             target_dir: str,
+            size: str = '640x360',
+            fps: int = 24,
             vcodec: str = "libx264",
             acodec: str = "copy",
             threads: int = 2,
@@ -18,7 +20,7 @@ class CommandCreator(object):
         comm = f"ffmpeg -i "\
                f"{join(Values.SOURCE_FILE_DIRECTORY.value, source)} "\
                f"-max_muxing_queue_size 1024 "\
-               f"-c:v {vcodec} -tag:v {tag} -vbsf h264_mp4toannexb "\
+               f"-c:v {vcodec} -tag:v {tag} -s {size} -r {fps} -vbsf h264_mp4toannexb "\
                f"-pix_fmt {pix_fmt} -map 0:0 -map 0:1 "\
                f"-c:a {acodec} -ar {bitrate} "\
                f"-threads {threads} "\

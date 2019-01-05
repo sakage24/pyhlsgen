@@ -21,7 +21,7 @@ class Concat(object):
                 if not entry.name.startswith('.')\
                    and entry.is_file()\
                    and splitext(entry.name)[1] in Values.ALLOWED_EXTENSION.value:
-                       yield (entry.name)
+                    yield (entry.name)
 
     def write_concat_text(self, path: str = '.', list_name: str = 'concat_file.txt'):
         with open(file=list_name, mode='wt', encoding='utf-8') as fp:
@@ -40,18 +40,19 @@ class Concat(object):
             path: str = '.',
             list_name: str = 'concat_file.txt',
             output_name: str = 'joined.mp4',
+            size: str = '640x360',
+            fps: int = 30,
             vcodec: str = 'libx265',
             acodec: str = 'copy',
+            tag: str = 'hvc1',
             threads: int = 2,
-            tag: str = "hvc1",
-            fps: int = 24,
             bitrate: int = 44100,
             pix_fmt: str = "yuv420p",
             ):
         self.write_concat_text(path=path, list_name=list_name)
         command = f"""
-                    ffmpeg -safe 0 -f concat -i {list_name} \
-                    -c:v {vcodec} -tag:v {tag} -r {fps} \
+                    ffmpeg -f concat -safe 0 -i {list_name} \
+                    -c:v {vcodec} -tag:v {tag} -s {size} -r {fps} \
                     -pix_fmt {pix_fmt} \
                     -c:a {acodec} -ar {bitrate} \
                     -c:s copy \
@@ -61,7 +62,8 @@ class Concat(object):
                    """
 
         # リスト内の空白、改行コードを削除する。文字列に\nがあれば空白に置換する
-        filled = [i.replace('\n', '') for i in command.split(" ") if i and i != '\n']
+        filled = [i.replace('\n', '')
+                  for i in command.split(" ") if i and i != '\n']
         platform = Values.PLATFORM.value.lower()
         if platform == 'linux':
             run(filled, shell=False, encoding='utf-8')
@@ -106,7 +108,8 @@ class Manager(object):
                 対象ディレクトリが存在しない可能性が微レ存
         """
         try:
-            result = self.extension_filter(lists=listdir(Values.SOURCE_FILE_DIRECTORY.value))
+            result = self.extension_filter(
+                lists=listdir(Values.SOURCE_FILE_DIRECTORY.value))
         except OSError:
             raise FileNotFoundError
         else:
