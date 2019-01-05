@@ -23,7 +23,7 @@ class Concat(object):
                    and splitext(entry.name)[1] in Values.ALLOWED_EXTENSION.value:
                        yield (entry.name)
 
-    def write_concat_text(self, path: str = '.', list_name: str = 'concat_files.txt'):
+    def write_concat_text(self, path: str = '.', list_name: str = 'concat_file.txt'):
         with open(file=list_name, mode='wt', encoding='utf-8') as fp:
             movie = []
             for i in self.__get_movie_list(path=path):
@@ -45,7 +45,6 @@ class Concat(object):
             threads: int = 2,
             tag: str = "hvc1",
             bitrate: int = 44100,
-            segment_time: int = 10,
             pix_fmt: str = "yuv420p",
             ):
         self.write_concat_text(path=path, list_name=list_name)
@@ -62,9 +61,10 @@ class Concat(object):
 
         # リスト内の空白、改行コードを削除する。文字列に\nがあれば空白に置換する
         filled = [i.replace('\n', '') for i in command.split(" ") if i and i != '\n']
-        if Values.PLATFORM.value.lower() == 'linux':
+        platform = Values.PLATFORM.value.lower()
+        if platform == 'linux':
             run(filled, shell=False, encoding='utf-8')
-        elif Values.PLATFORM.value.lower() == 'win32':
+        elif platform == 'win32':
             run(filled, shell=True, encoding='utf-8')
 
 
