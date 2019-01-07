@@ -3,7 +3,7 @@ class CommandCreator(object):
              source: str,
              dest: str,
              threads: int = 2,
-             size: str = '720x480',
+             size: str = 'hd720',
              fps: int = 30,
              vcodec: str = "libx265",
              acodec: str = "copy",

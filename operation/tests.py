@@ -2,5 +2,5 @@ from files import Concat
 
 
 concat = Concat()
-concat.run(path='/tmp/p/', output_name='/tmp/p/join.mp4')
+concat.run(path='/tmp/tmp', output_name='/tmp/tmp/joined.mp4')
 
