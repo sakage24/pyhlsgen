@@ -45,7 +45,9 @@ def main():
                 operation.make_directory(path=target_dir)
                 comm = hls.hls(source=f,
                                target_dir=target_dir,
+                               vcodec='libx264',
                                acodec=acodec,
+                               tag='copy',
                                )
 
             if Values.PLATFORM.value == 'win32':

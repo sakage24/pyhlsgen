@@ -4,7 +4,7 @@ class Default(object):
              dest: str,
              threads: int = 2,
              size: str = 'hd720',
-             fps: int = 30,
+             fps: int = 60,
              vcodec: str = "libx265",
              acodec: str = "copy",
              tag: str = "hvc1",

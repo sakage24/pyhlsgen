@@ -11,6 +11,55 @@ from enum import Enum
 from subprocess import run
 
 
+class Crop(object):
+    def on_message(self,
+                   source: str,
+                   ss: int,
+                   framerate: float,
+                   output_file_name: str,
+                   platform: str):
+        print(
+            f"""
+            サムネイルの撮影を開始しています...。
+            - ソースファイル: {source}
+            - タイミング: {ss}秒に1枚
+            - フレームレート: {1/framerate}
+            - 保存先: {output_file_name}
+            - プラットフォーム(OS): {platform}
+
+            """
+        )
+
+    def thumbnail(self,
+                  source: str,
+                  target_dir: str,
+                  ss: int = 10,
+                  frame_per_second: float = 0.03,
+                  output_file_name: str = "thumbnail_%06d.jpg",
+                  platform: str = "linux"):
+        output_dir: str = join(target_dir, 'thumbnails')
+        command = f"ffmpeg -i {source} -ss {ss} -r {frame_per_second} -f image2 {join(output_dir, output_file_name)}"
+        command = command.split(" ")
+
+        try:
+            if not exists(path=output_dir):
+                makedirs(output_dir, mode=0o705)
+        except OSError:
+            return False
+        else:
+            self.on_message(source=source,
+                            ss=ss,
+                            framerate=frame_per_second,
+                            output_file_name=output_file_name,
+                            platform=platform)
+            if platform == "linux":
+                run(command, shell=False, encoding='utf-8')
+            elif platform == "win32":
+                run(command, shell=True, encoding='utf-8')
+            else:
+                return False
+
+
 class Concat(object):
     def __get_movie_list(self, path: str = '.') -> iter:
         """
@@ -20,10 +69,13 @@ class Concat(object):
             for entry in it:
                 if not entry.name.startswith('.')\
                    and entry.is_file()\
-                   and splitext(entry.name)[1] in Values.ALLOWED_EXTENSION.value:
+                   and splitext(entry.name)[1]\
+                   in Values.ALLOWED_EXTENSION.value:
                     yield (entry.name)
 
-    def write_concat_text(self, path: str = '.', list_name: str = 'concat_file.txt'):
+    def write_concat_text(self,
+                          path: str = '.',
+                          list_name: str = 'concat_file.txt'):
         with open(file=list_name, mode='wt', encoding='utf-8') as fp:
             movie = []
             for i in self.__get_movie_list(path=path):
