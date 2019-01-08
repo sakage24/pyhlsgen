@@ -1,5 +1,6 @@
 from os.path import join
 from operation.files import Values
+from thumbnail.crop import Image
 
 
 class CommandCreator(object):
@@ -17,6 +18,8 @@ class CommandCreator(object):
             pix_fmt: str = "yuv420p",
             ) -> list:
 
+        img = Image()
+        img.create_thumbnail(source=source, target_dir=target_dir)
         comm = f"ffmpeg -i "\
                f"{join(Values.SOURCE_FILE_DIRECTORY.value, source)} "\
                f"-max_muxing_queue_size 1024 "\
