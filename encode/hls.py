@@ -3,7 +3,7 @@ from operation.files import Values
 from thumbnail.crop import Image
 
 
-class CommandCreator(object):
+class Default(object):
     def hls(self,
             source: str,
             target_dir: str,

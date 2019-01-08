@@ -1,8 +1,8 @@
 import os
 import sys
 import subprocess
-from encode.hls import CommandCreator as hls_command
-from encode.h265 import CommandCreator as h265_command
+from encode.hls import Default as hls_command
+from encode.h265 import Default as h265_command
 from operation.files import Values
 from operation.files import Manager
 from operation.files import Operation

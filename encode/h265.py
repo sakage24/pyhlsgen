@@ -1,4 +1,4 @@
-class CommandCreator(object):
+class Default(object):
     def h265(self,
              source: str,
              dest: str,
