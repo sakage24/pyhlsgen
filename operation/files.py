@@ -13,11 +13,11 @@ from subprocess import run
 
 class Crop(object):
     def on_message(self,
-                   source: str,
-                   ss: int,
-                   framerate: float,
-                   output_file_name: str,
-                   platform: str):
+                   source: str = 'unknown',
+                   ss: int = 'unkown',
+                   framerate: float = '0.05',
+                   output_file_name: str = 'outputs',
+                   platform: str = 'Your currentry use a operation system.'):
         print(
             f"""
             サムネイルの撮影を開始しています...。
