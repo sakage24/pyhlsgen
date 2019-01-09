@@ -1,6 +1,8 @@
+from subprocess import run
 from os.path import join
 from operation.files import Values
 from operation.files import Crop
+from operation.files import Operation
 
 
 class Default(object):
@@ -33,3 +35,27 @@ class Default(object):
                f"-segment_list {join(target_dir, 'output.m3u8')} " \
                f"{join(target_dir, 'stream-%06d.ts')}"
         return comm.split(" ")
+
+    def run(self,
+            name: str,
+            vcodec: str = 'libx264',
+            acodec: str = 'copy',
+            tag: str = 'hvc1'):
+        dirs = './m3u8'
+        output = join(dirs, name)
+        ops = Operation()
+        ops.make_directory(output)
+        command = self.hls(
+            source=name,
+            target_dir=output,
+            vcodec=vcodec,
+            acodec=acodec,
+            tag=tag,
+        )
+        if Values.PLATFORM.value == 'win32':
+            run(['chcp', '65001'],
+                shell=True,
+                encoding='utf-8')
+            run(command, shell=True, encoding='utf-8')
+        elif Values.PLATFORM.value == 'linux':
+            run(command, shell=False, encoding='utf-8')

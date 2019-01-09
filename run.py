@@ -1,6 +1,5 @@
-import os
-import sys
-import subprocess
+from os import rename
+from sys import argv
 from encode.hls import Default as hls_command
 from encode.h265 import Default as h265_command
 from operation.files import Values
@@ -13,52 +12,18 @@ def main():
     manager = Manager()
     hls = hls_command()
     h265 = h265_command()
-    vcodec, acodec = Operation.get_codecs(args=sys.argv)
-    ext = operation.get_exts(codec=vcodec)
-    output_directory = os.path.join(
-        Values.SOURCE_FILE_DIRECTORY.value,
-        Values.DESTINATION_FILE_DIRECTORY.value,
-    )
 
     for f in manager.get_movie_list():
-        after_file_name = operation.escape_chars(name=f)
+        fixed = operation.escape_chars(name=f)
         try:
-            os.rename(src=f, dst=after_file_name)
+            rename(src=f, dst=fixed)
         except OSError:
             raise OSError
         else:
-            f = after_file_name
-            if len(sys.argv) > 1:
-                if os.path.exists(os.path.splitext(f)[0] + f"_{vcodec}{ext}"):
-                    print("すでに存在するため、スキップします...")
-                comm = h265.h265(
-                    source=f,
-                    dest=os.path.splitext(f)[0] + f"_{vcodec}{ext}",
-                    vcodec=vcodec,
-                    acodec=acodec,
-                )
+            if len(argv) <= 1:
+                hls.run(name=fixed)
             else:
-                target_dir = os.path.join(output_directory,
-                                          os.path.splitext(f)[0],
-                                          )
-
-                operation.make_directory(path=target_dir)
-                comm = hls.hls(source=f,
-                               target_dir=target_dir,
-                               vcodec='libx264',
-                               acodec=acodec,
-                               tag='copy',
-                               )
-
-            if Values.PLATFORM.value == 'win32':
-                subprocess.run(['chcp', '65001'],
-                               shell=True, encoding='utf-8')
-                subprocess.run(comm, shell=True, encoding='utf-8')
-            elif Values.PLATFORM.value == 'linux':
-                subprocess.run(comm, shell=False, encoding='utf-8')
-            else:
-                print('対応していないディストリビューションで実行しています...\nプログラムを終了します。')
-                sys.exit(1)
+                h265.run(name=fixed)
 
 
 main()

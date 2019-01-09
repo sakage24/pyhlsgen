@@ -1,3 +1,9 @@
+from subprocess import run
+from os.path import join
+from operation.files import Values
+from operation.files import Operation
+
+
 class Default(object):
     def h265(self,
              source: str,
@@ -19,3 +25,27 @@ class Default(object):
                   f"-pix_fmt {pix_fmt} "\
                   f"{dest}"
         return command.split(" ")
+
+    def run(self,
+            name: str,
+            vcodec: str = 'libx265',
+            acodec: str = 'copy',
+            tag: str = 'hvc1'):
+        dirs = vcodec
+        output = join(dirs, name)
+        ops = Operation()
+        ops.make_directory(dirs)
+        command = self.h265(
+            source=name,
+            dest=output,
+            vcodec=vcodec,
+            acodec=acodec,
+            tag=tag,
+        )
+        if Values.PLATFORM.value == 'win32':
+            run(['chcp', '65001'],
+                shell=True,
+                encoding='utf-8')
+            run(command, shell=True, encoding='utf-8')
+        elif Values.PLATFORM.value == 'linux':
+            run(command, shell=False, encoding='utf-8')
