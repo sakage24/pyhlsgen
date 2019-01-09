@@ -136,58 +136,6 @@ class Values(Enum):
     DESTINATION_FILE_DIRECTORY: str = 'm3u8'
 
 
-class Manager(object):
-    """
-    メディアファイルの取得、保存用のフォルダ作成などいろいろやる
-
-    """
-
-    def __init__(self):
-        pass
-
-    def get_movie_list(self) -> iter:
-        """
-        実質的にextension_filter関数のラッパー関数。
-        media/以下のファイル一覧を含むジェネレータを返します。
-        Parameters
-        -----------
-        Returns
-        -----------
-            result: list
-        Raises
-        -----------
-            FileNotFoundError
-                対象ディレクトリが存在しない可能性が微レ存
-        """
-        try:
-            result = self.extension_filter(
-                lists=listdir(Values.SOURCE_FILE_DIRECTORY.value))
-        except OSError:
-            raise FileNotFoundError
-        else:
-            return result
-
-    @staticmethod
-    def extension_filter(lists: list) -> iter:
-        """
-        ALLOWED_EXTENSIONにあるファイル拡張子に基づいてフィルタリングして、ジェネレータを返す
-        Parameters
-        ------------
-            lists: list
-                処理前のリスト。
-
-        Returns
-        -----------
-            allowed: list
-                処理結果のリスト。
-
-        """
-        for extension in lists:
-            if splitext(extension)[1] in \
-               Values.ALLOWED_EXTENSION.value:
-                yield extension
-
-
 class Operation(object):
     @staticmethod
     def get_codecs(args: list = argv) -> tuple:
@@ -306,3 +254,45 @@ class Operation(object):
         else:
             print(f"{path}はすでに存在します...")
             return False
+
+    def get_movie_list(self) -> iter:
+        """
+        実質的にextension_filter関数のラッパー関数。
+        media/以下のファイル一覧を含むジェネレータを返します。
+        Parameters
+        -----------
+        Returns
+        -----------
+            result: list
+        Raises
+        -----------
+            FileNotFoundError
+                対象ディレクトリが存在しない可能性が微レ存
+        """
+        try:
+            result = self.extension_filter(
+                lists=listdir(Values.SOURCE_FILE_DIRECTORY.value))
+        except OSError:
+            raise FileNotFoundError
+        else:
+            return result
+
+    @staticmethod
+    def extension_filter(lists: list) -> iter:
+        """
+        ALLOWED_EXTENSIONにあるファイル拡張子に基づいてフィルタリングして、ジェネレータを返す
+        Parameters
+        ------------
+            lists: list
+                処理前のリスト。
+
+        Returns
+        -----------
+            allowed: list
+                処理結果のリスト。
+
+        """
+        for extension in lists:
+            if splitext(extension)[1] in \
+               Values.ALLOWED_EXTENSION.value:
+                yield extension

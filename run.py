@@ -3,18 +3,16 @@ from sys import argv
 from encode.hls import Default as hls_command
 from encode.h265 import Default as h265_command
 from operation.files import Values
-from operation.files import Manager
 from operation.files import Operation
 
 
 def main():
-    operation = Operation()
-    manager = Manager()
+    ops = Operation()
     hls = hls_command()
     h265 = h265_command()
 
-    for f in manager.get_movie_list():
-        fixed = operation.escape_chars(name=f)
+    for f in ops.get_movie_list():
+        fixed = ops.escape_chars(name=f)
         try:
             rename(src=f, dst=fixed)
         except OSError:
