@@ -32,7 +32,7 @@ def main():
                     vcodec=vcodec,
                     acodec=acodec,
                 )
-            encode.run()
+            encode.run(thumbnail=True)
 
 
 main()

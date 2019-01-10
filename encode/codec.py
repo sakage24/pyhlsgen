@@ -39,6 +39,20 @@ class Default(object):
                 encoding=encoding)
         run(command, shell=shell, encoding=encoding)
 
+    def run(self, thumbnail=False):
+        output = join(self.vcodec, self.source)
+        ops = Operation()
+        ops.make_directory(output)
+        if thumbnail:
+            crop = Crop()
+            crop.thumbnail(source=self.source, target_dir=output)
+        if Values.SOURCE_FILE_DIRECTORY.value == 'win32':
+            shell = True
+        else:
+            shell = False
+
+        self.subprocess_run(command=self.command_create(), shell=shell)
+
 
 class h265(Default):
     def command_create(self):
@@ -49,16 +63,6 @@ class h265(Default):
                       f"-pix_fmt {self.pix_fmt} "\
                       f"{self.dest}"
             return command.split(" ")
-
-    def run(self):
-        ops = Operation()
-        ops.make_directory(self.vcodec)
-        if Values.SOURCE_FILE_DIRECTORY.value == 'win32':
-            shell = True
-        else:
-            shell = False
-
-        self.subprocess_run(command=self.command_create(), shell=shell)
 
 
 class hls(Default):
@@ -76,16 +80,3 @@ class hls(Default):
                f"-segment_list {join(self.dest, 'output.m3u8')} " \
                f"{join(self.dest, 'stream-%06d.ts')}"
         return command.split(" ")
-
-    def run(self):
-        output = join(self.vcodec, self.source)
-        ops = Operation()
-        ops.make_directory(output)
-        crop = Crop()
-        crop.thumbnail(source=self.source, target_dir=output)
-        if Values.SOURCE_FILE_DIRECTORY.value == 'win32':
-            shell = True
-        else:
-            shell = False
-
-        self.subprocess_run(command=self.command_create(), shell=shell)
