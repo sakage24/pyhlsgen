@@ -1,15 +1,14 @@
 from os import rename
+from os.path import join
 from sys import argv
-from encode.hls import Default as hls_command
-from encode.h265 import Default as h265_command
+from encode.codec import hls
+from encode.codec import h265
 from operation.files import Values
 from operation.files import Operation
 
 
 def main():
     ops = Operation()
-    hls = hls_command()
-    h265 = h265_command()
 
     for f in ops.get_movie_list():
         fixed = ops.escape_chars(name=f)
@@ -18,10 +17,22 @@ def main():
         except OSError:
             raise OSError
         else:
+            vcodec, acodec = Operation.get_codecs(argv)
             if len(argv) <= 1:
-                hls.run(name=fixed)
+                encode = hls(
+                    source=fixed,
+                    dest=join('m3u8', fixed),
+                    vcodec=vcodec,
+                    acodec=acodec,
+                )
             else:
-                h265.run(name=fixed)
+                encode = h265(
+                    source=fixed,
+                    dest=join(vcodec, fixed),
+                    vcodec=vcodec,
+                    acodec=acodec,
+                )
+            encode.run()
 
 
 main()
