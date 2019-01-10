@@ -1,5 +1,6 @@
 from subprocess import run
 from os.path import join
+from os.path import splitext
 from operation.files import Values
 from operation.files import Operation
 from operation.files import Crop
@@ -40,9 +41,10 @@ class Default(object):
         run(command, shell=shell, encoding=encoding)
 
     def run(self, thumbnail=False):
-        output = join(self.vcodec, self.source)
+        output = join(self.vcodec, splitext(self.source)[0])
         ops = Operation()
         ops.make_directory(output)
+        self.dest = output
         if thumbnail:
             crop = Crop()
             crop.thumbnail(source=self.source, target_dir=output)
@@ -61,7 +63,7 @@ class h265(Default):
                       f"-c:a {self.acodec} -ar {self.bitrate} "\
                       f"-threads {self.threads} "\
                       f"-pix_fmt {self.pix_fmt} "\
-                      f"{self.dest}"
+                      f"{join(self.dest, self.source)}"
             return command.split(" ")
 
 
