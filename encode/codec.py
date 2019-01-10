@@ -21,9 +21,9 @@ class Default(object):
                  ):
         self.source: str = source
         self.dest: str = dest
+        self.size: str = size
         self.threads: int = threads if source else 2
         self.fps: int = fps if fps else 24
-        self.size: str = size if size else "copy"
         self.vcodec: str = vcodec if vcodec else "libx264"
         self.acodec: str = acodec if acodec else "copy"
         self.tag: str = tag if tag else "hvc1"
