@@ -13,8 +13,8 @@ from subprocess import run
 
 class Crop(object):
     def on_message(self,
+                   ss: int,
                    source: str = 'unknown',
-                   ss: int = 'unkown',
                    framerate: float = '0.05',
                    output_file_name: str = 'outputs',
                    platform: str = 'Your currentry use a operation system.'):
@@ -33,12 +33,12 @@ class Crop(object):
     def thumbnail(self,
                   source: str,
                   target_dir: str,
-                  ss: int = 10,
+                  ss: int = 30,
                   frame_per_second: float = 0.03,
                   output_file_name: str = "thumbnail_%06d.jpg",
                   platform: str = "linux"):
         output_dir: str = join(target_dir, 'thumbnails')
-        command = f"ffmpeg -i {source} -ss {ss} -r {frame_per_second} -f image2 {join(output_dir, output_file_name)}"
+        command = f"ffmpeg -ss {ss} -i {source} -r {frame_per_second} -f image2 {join(output_dir, output_file_name)}"
         command = command.split(" ")
 
         try:
