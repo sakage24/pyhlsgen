@@ -9,36 +9,21 @@ from sys import argv
 from sys import platform
 from enum import Enum
 from subprocess import run
+from datetime import datetime
+from datetime import timedelta
+import cv2
 
 
 class Crop(object):
-    def on_message(self,
-                   ss: int,
-                   source: str = 'unknown',
-                   framerate: float = '0.05',
-                   output_file_name: str = 'outputs',
-                   platform: str = 'Your currentry use a operation system.'):
-        print(
-            f"""
-            サムネイルの撮影を開始しています...。
-            - ソースファイル: {source}
-            - タイミング: {ss}秒に1枚
-            - フレームレート: {1/framerate}
-            - 保存先: {output_file_name}
-            - プラットフォーム(OS): {platform}
-
-            """
-        )
-
     def thumbnail(self,
                   source: str,
                   target_dir: str,
-                  ss: int = 30,
-                  frame_per_second: float = 0.03,
+                  ss: int = '00:00:08',
+                  size: str = '256x192',
                   output_file_name: str = "thumbnail_%06d.jpg",
                   platform: str = "linux"):
         output_dir: str = join(target_dir, 'thumbnails')
-        command = f"ffmpeg -ss {ss} -i {source} -r {frame_per_second} -f image2 {join(output_dir, output_file_name)}"
+        command = f"ffmpeg -i {source} -f image2 -ss {ss} -vframes 1 -s {size} {join(output_dir, output_file_name)}"
         command = command.split(" ")
 
         try:
@@ -47,11 +32,6 @@ class Crop(object):
         except OSError:
             return False
         else:
-            self.on_message(source=source,
-                            ss=ss,
-                            framerate=frame_per_second,
-                            output_file_name=output_file_name,
-                            platform=platform)
             if platform == "linux":
                 run(command, shell=False, encoding='utf-8')
             elif platform == "win32":
@@ -137,6 +117,13 @@ class Values(Enum):
 
 
 class Operation(object):
+    @staticmethod
+    def get_movie_sec(path: str) -> int:
+        v = cv2.VideoCapture(path)
+        frame = v.get(cv2.CAP_PROP_FRAME_COUNT) # フレーム数を取得する
+        fps = v.get(cv2.CAP_PROP_FPS)           # FPS を取得する
+        return frame // fps
+
     @staticmethod
     def get_codecs(args: list = argv) -> tuple:
         if len(args) > 2:
