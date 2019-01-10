@@ -5,13 +5,13 @@ from os import listdir
 from os import chmod
 from os import scandir
 from os import makedirs
-from sys import argv
 from sys import platform
 from enum import Enum
 from subprocess import run
 from datetime import datetime
 from datetime import timedelta
 import cv2
+from argparse import ArgumentParser
 
 
 class Crop(object):
@@ -118,24 +118,26 @@ class Values(Enum):
 
 class Operation(object):
     @staticmethod
+    def do_parse_args() -> dict:
+        parser = ArgumentParser(description='You can use some arguments.')
+        parser.add_argument('--vcodec',       default='copy',    type=str)
+        parser.add_argument('--acodec',       default='copy',    type=str)
+        parser.add_argument('--tag',          default='hvc1',    type=str)
+        parser.add_argument('--size',         default='hd480',   type=str)
+        parser.add_argument('--thumbnail',    default=False,     type=int)
+        parser.add_argument('--threads',      default=2,         type=int)
+        parser.add_argument('--fps',          default=30,        type=int)
+        parser.add_argument('--bitrate',      default=44100,     type=int)
+        parser.add_argument('--pix_fmt',      default='yuv420p', type=str)
+        parser.add_argument('--segment_time', default=10,        type=int)
+        return vars(parser.parse_args())
+
+    @staticmethod
     def get_movie_sec(path: str) -> int:
         v = cv2.VideoCapture(path)
         frame = v.get(cv2.CAP_PROP_FRAME_COUNT) # フレーム数を取得する
         fps = v.get(cv2.CAP_PROP_FPS)           # FPS を取得する
         return frame // fps
-
-    @staticmethod
-    def get_codecs(args: list = argv) -> tuple:
-        if len(args) > 2:
-            vcodec = args[1]
-            acodec = args[2]
-        elif len(args) > 1:
-            vcodec = args[1]
-            acodec = 'copy'
-        else:
-            vcodec = 'copy'
-            acodec = 'copy'
-        return (vcodec, acodec)
 
     @staticmethod
     def get_exts(codec: str) -> str:

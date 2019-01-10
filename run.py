@@ -9,6 +9,17 @@ from operation.files import Operation
 
 def main():
     ops = Operation()
+    args = Operation.do_parse_args()
+    vcodec = args['vcodec']
+    acodec = args['acodec']
+    tag = args['tag']
+    size = args['size']
+    thumbnail = args['thumbnail']
+    threads = args['threads']
+    fps = args['fps']
+    bitrate = args['bitrate']
+    pix_fmt = args['pix_fmt']
+    segment_time = args['segment_time']
 
     for f in ops.get_movie_list():
         fixed = ops.escape_chars(name=f)
@@ -17,13 +28,20 @@ def main():
         except OSError:
             raise OSError
         else:
-            vcodec, acodec = Operation.get_codecs(argv)
-            if len(argv) <= 1:
+            if args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
+                print('hls or m3u8形式のエンコードにはlibx264のみ利用しています...')
                 encode = hls(
                     source=fixed,
                     dest=join('m3u8', fixed),
-                    vcodec=vcodec,
+                    vcodec='libx264',
                     acodec=acodec,
+                    tag=tag,
+                    size=size,
+                    threads=threads,
+                    fps=fps,
+                    bitrate=bitrate,
+                    pix_fmt=pix_fmt,
+                    segment_time=segment_time,
                 )
             else:
                 encode = h265(
@@ -31,7 +49,15 @@ def main():
                     dest=join(vcodec, fixed),
                     vcodec=vcodec,
                     acodec=acodec,
+                    tag=tag,
+                    size=size,
+                    threads=threads,
+                    fps=fps,
+                    bitrate=bitrate,
+                    pix_fmt=pix_fmt,
+                    segment_time=segment_time,
                 )
+
             encode.run(thumbnail=True)
 
 
