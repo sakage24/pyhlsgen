@@ -1,6 +1,5 @@
 from os import rename
 from os.path import join
-from sys import argv
 from encode.codec import hls
 from encode.codec import h265
 from operation.files import Values
@@ -58,7 +57,7 @@ def main():
                     segment_time=segment_time,
                 )
 
-            encode.run(thumbnail=True)
+            encode.run(thumbnail=thumbnail)
 
 
 main()

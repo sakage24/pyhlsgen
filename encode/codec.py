@@ -33,7 +33,10 @@ class Default(object):
         self.segment_time: int = segment_time if segment_time else 10
         self.command: str = ""
 
-    def subprocess_run(self, command: str, shell: bool, encoding: str = "utf-8"):
+    def subprocess_run(self,
+                       command: str,
+                       shell: bool,
+                       encoding: str = "utf-8"):
         if Values.PLATFORM.value == 'win32':
             run(['chcp', '65001'],
                 shell=shell,
@@ -53,32 +56,33 @@ class Default(object):
         else:
             shell = False
 
-        self.subprocess_run(command=self.command_create(), shell=shell)
+        self.subprocess_run(command=self.command_create(),
+                            shell=shell)
 
 
 class h265(Default):
     def command_create(self):
-            command = f"ffmpeg -i {self.source} -c:v {self.vcodec} -tag:v {self.tag} "\
-                      f"-s {self.size} -r {self.fps} "\
-                      f"-c:a {self.acodec} -ar {self.bitrate} "\
-                      f"-threads {self.threads} "\
-                      f"-pix_fmt {self.pix_fmt} "\
-                      f"{join(self.dest, self.source)}"
-            return command.split(" ")
+        command = f"ffmpeg -i {self.source} -c:v {self.vcodec} -tag:v {self.tag} "\
+                  f"-s {self.size} -r {self.fps} "\
+                  f"-c:a {self.acodec} -ar {self.bitrate} "\
+                  f"-threads {self.threads} "\
+                  f"-pix_fmt {self.pix_fmt} "\
+                  f"{join(self.dest, self.source)}"
+        return command.split(" ")
 
 
 class hls(Default):
     def command_create(self):
         command = f"ffmpeg -i "\
-               f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
-               f"-max_muxing_queue_size 1024 "\
-               f"-c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} "\
-               f"-vbsf h264_mp4toannexb "\
-               f"-pix_fmt {self.pix_fmt} -map 0:0 -map 0:1 "\
-               f"-c:a {self.acodec} -ar {self.bitrate} "\
-               f"-threads {self.threads} "\
-               f"-f segment -segment_format mpegts "\
-               f"-segment_time {self.segment_time} "\
-               f"-segment_list {join(self.dest, 'output.m3u8')} " \
-               f"{join(self.dest, 'stream-%06d.ts')}"
+            f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
+            f"-max_muxing_queue_size 1024 "\
+            f"-c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} "\
+            f"-vbsf h264_mp4toannexb "\
+            f"-pix_fmt {self.pix_fmt} -map 0:0 -map 0:1 "\
+            f"-c:a {self.acodec} -ar {self.bitrate} "\
+            f"-threads {self.threads} "\
+            f"-f segment -segment_format mpegts "\
+            f"-segment_time {self.segment_time} "\
+            f"-segment_list {join(self.dest, 'output.m3u8')} " \
+            f"{join(self.dest, 'stream-%06d.ts')}"
         return command.split(" ")

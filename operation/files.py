@@ -8,10 +8,8 @@ from os import makedirs
 from sys import platform
 from enum import Enum
 from subprocess import run
-from datetime import datetime
-from datetime import timedelta
-import cv2
 from argparse import ArgumentParser
+import cv2
 
 
 class Crop(object):
@@ -23,7 +21,8 @@ class Crop(object):
                   output_file_name: str = "thumbnail_%06d.jpg",
                   platform: str = "linux"):
         output_dir: str = join(target_dir, 'thumbnails')
-        command = f"ffmpeg -i {source} -f image2 -ss {ss} -vframes 1 -s {size} {join(output_dir, output_file_name)}"
+        command = f"ffmpeg -i {source} -f image2 -ss {ss} "\
+                  f"-vframes 1 -s {size} {join(output_dir, output_file_name)}"
         command = command.split(" ")
 
         try:
@@ -135,7 +134,7 @@ class Operation(object):
     @staticmethod
     def get_movie_sec(path: str) -> int:
         v = cv2.VideoCapture(path)
-        frame = v.get(cv2.CAP_PROP_FRAME_COUNT) # フレーム数を取得する
+        frame = v.get(cv2.CAP_PROP_FRAME_COUNT)  # フレーム数を取得する
         fps = v.get(cv2.CAP_PROP_FPS)           # FPS を取得する
         return frame // fps
 
