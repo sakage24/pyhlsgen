@@ -30,7 +30,17 @@ def main():
             raise OSError
         else:
             if isjoin:
-                encode = Concat()
+                encode = Concat(
+                    vcodec=vcodec,
+                    acodec=acodec,
+                    tag=tag,
+                    size=size,
+                    threads=threads,
+                    fps=fps,
+                    bitrate=bitrate,
+                    pix_fmt=pix_fmt,
+                    segment_time=segment_time,
+                )
                 encode.run()
                 return
             elif args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':

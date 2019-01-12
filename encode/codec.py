@@ -13,7 +13,7 @@ class Default(object):
     def __init__(self,
                  source: str = ".",
                  dest: str = ".",
-                 size: str = '640x360',
+                 size: str = '720x478',
                  vcodec: str = "",
                  acodec: str = "",
                  tag: str = "",
@@ -28,7 +28,7 @@ class Default(object):
         self.source: str = source
         self.dest: str = dest
         self.size: str = size
-        self.vcodec: str = vcodec if vcodec else "libx264"
+        self.vcodec: str = vcodec if vcodec else "libx265"
         self.acodec: str = acodec if acodec else "copy"
         self.tag: str = tag if tag else "hvc1"
         self.pix_fmt: str = pix_fmt if pix_fmt else "yuv420p"

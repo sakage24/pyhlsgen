@@ -62,7 +62,7 @@ class Operation(object):
         parser.add_argument(
             '--tag',                default='hvc1',    type=str)
         parser.add_argument(
-            '--size',               default='640x360', type=str)
+            '--size',               default='640x480', type=str)
         parser.add_argument(
             '--threads',            default=2,         type=int)
         parser.add_argument(
