@@ -11,8 +11,8 @@ from datetime import datetime
 
 class Default(object):
     def __init__(self,
-                 source: str,
-                 dest: str,
+                 source: str = ".",
+                 dest: str = ".",
                  size: str = '640x360',
                  vcodec: str = "",
                  acodec: str = "",
@@ -32,9 +32,9 @@ class Default(object):
         self.acodec: str = acodec if acodec else "copy"
         self.tag: str = tag if tag else "hvc1"
         self.pix_fmt: str = pix_fmt if pix_fmt else "yuv420p"
-        self.file_name: str = file_name if file_name else "ffmpeg_join_list.txt"
         now = str(datetime.now()).translate(
             str.maketrans({'-': '_', ' ': '_', '.': '_'}))
+        self.file_name: str = file_name if file_name else f"{now}.txt"
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
         self.size: str = size
         self.command: str = ""
@@ -126,6 +126,7 @@ class Concat(Default):
             pass
 
     def command_create(self):
+        self.write_concat_text()
         command = f"""
                     ffmpeg -f concat -safe 0 -i {self.file_name} \
                     -c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} \

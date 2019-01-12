@@ -30,11 +30,9 @@ def main():
             raise OSError
         else:
             if isjoin:
-                encode = Concat(
-                    source=fixed,
-                    dest=join('concat', fixed),
-                )
-                encode.write_concat_text()
+                encode = Concat()
+                encode.run()
+                return
             elif args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
                 print('hls or m3u8形式のエンコードにはlibx264のみ利用しています...')
                 encode = hls(
