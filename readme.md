@@ -6,6 +6,13 @@ This program is a wrapper program of [ffmpeg](https://ffmpeg.org/). Therefore, y
 
 ## Usage
 
+```bash
+usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
+[--threads THREADS] [--fps FPS] [--bitrate BITRATE]
+[--pix_fmt PIX_FMT] [--segment_time SEGMENT_TIME] [--thumbnail]
+[-c]
+```
+
 ### * -> m3u8
 
 1. Put in the source files in the same directory as the sctipts.
