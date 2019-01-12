@@ -119,16 +119,17 @@ class Operation(object):
     @staticmethod
     def do_parse_args() -> dict:
         parser = ArgumentParser(description='You can use some arguments.')
-        parser.add_argument('--vcodec',       default='copy',    type=str)
-        parser.add_argument('--acodec',       default='copy',    type=str)
+        parser.add_argument('-v', '--vcodec', default='copy',    type=str)
+        parser.add_argument('-a', '--acodec', default='copy',    type=str)
         parser.add_argument('--tag',          default='hvc1',    type=str)
-        parser.add_argument('--size',         default='hd480',   type=str)
-        parser.add_argument('--thumbnail',    default=False,     type=int)
+        parser.add_argument('--size',         default='640x360', type=str)
         parser.add_argument('--threads',      default=2,         type=int)
         parser.add_argument('--fps',          default=30,        type=int)
         parser.add_argument('--bitrate',      default=44100,     type=int)
         parser.add_argument('--pix_fmt',      default='yuv420p', type=str)
         parser.add_argument('--segment_time', default=10,        type=int)
+        parser.add_argument('--thumbnail',    action='store_true')
+        parser.add_argument('-j', '--concat', action='store_true')
         return vars(parser.parse_args())
 
     @staticmethod
