@@ -2,23 +2,25 @@ from os import rename
 from os.path import join
 from encode.codec import hls
 from encode.codec import h265
+from encode.codec import Concat
 from operation.files import Values
 from operation.files import Operation
 
 
 def main():
     ops = Operation()
-    args = Operation.do_parse_args()
-    vcodec = args['vcodec']
-    acodec = args['acodec']
-    tag = args['tag']
-    size = args['size']
-    thumbnail = args['thumbnail']
-    threads = args['threads']
-    fps = args['fps']
-    bitrate = args['bitrate']
-    pix_fmt = args['pix_fmt']
-    segment_time = args['segment_time']
+    args:         dict = Operation.do_parse_args()
+    vcodec:       str = args['vcodec']
+    acodec:       str = args['acodec']
+    tag:          str = args['tag']
+    size:         str = args['size']
+    pix_fmt:      str = args['pix_fmt']
+    threads:      int = args['threads']
+    fps:          int = args['fps']
+    bitrate:      int = args['bitrate']
+    segment_time: int = args['segment_time']
+    thumbnail:    bool = args['thumbnail']
+    isjoin:       bool = args['concat']
 
     for f in ops.get_movie_list():
         fixed = ops.escape_chars(name=f)
@@ -27,7 +29,13 @@ def main():
         except OSError:
             raise OSError
         else:
-            if args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
+            if isjoin:
+                encode = Concat(
+                    source=fixed,
+                    dest=join('concat', fixed),
+                )
+                encode.write_concat_text()
+            elif args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
                 print('hls or m3u8形式のエンコードにはlibx264のみ利用しています...')
                 encode = hls(
                     source=fixed,

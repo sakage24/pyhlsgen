@@ -2,9 +2,8 @@ from os.path import exists
 from os.path import join
 from os.path import splitext
 from os import listdir
-from os import chmod
-from os import scandir
 from os import makedirs
+from os import chmod
 from sys import platform
 from enum import Enum
 from subprocess import run
@@ -39,69 +38,6 @@ class Crop(object):
                 return False
 
 
-class Concat(object):
-    def __get_movie_list(self, path: str = '.') -> iter:
-        """
-        結合する動画一覧を返す
-        """
-        with scandir(path) as it:
-            for entry in it:
-                if not entry.name.startswith('.')\
-                   and entry.is_file()\
-                   and splitext(entry.name)[1]\
-                   in Values.ALLOWED_EXTENSION.value:
-                    yield (entry.name)
-
-    def write_concat_text(self,
-                          path: str = '.',
-                          list_name: str = 'concat_file.txt'):
-        with open(file=list_name, mode='wt', encoding='utf-8') as fp:
-            movie = []
-            for i in self.__get_movie_list(path=path):
-                movie.append(join(path, i))
-
-            # 昇順でソートしてからテキストファイルに書き込みする
-            [fp.write(f"file '{i}'\n") for i in sorted(movie)]
-        try:
-            chmod(list_name, 0o704)
-        except OSError:
-            pass
-
-    def run(self,
-            path: str = '.',
-            list_name: str = 'concat_file.txt',
-            output_name: str = 'joined.mp4',
-            size: str = 'hd720',
-            fps: int = 24,
-            vcodec: str = 'libx265',
-            acodec: str = 'ac3',
-            tag: str = 'hvc1',
-            threads: int = 2,
-            bitrate: int = 44100,
-            pix_fmt: str = "yuv420p",
-            ):
-        self.write_concat_text(path=path, list_name=list_name)
-        command = f"""
-                    ffmpeg -f concat -safe 0 -i {list_name} \
-                    -c:v {vcodec} -tag:v {tag} -s {size} -r {fps} \
-                    -pix_fmt {pix_fmt} \
-                    -c:a {acodec} -ar {bitrate} \
-                    -c:s copy \
-                    -map 0:v -map 0:a -map 0:s? \
-                    -threads {threads} \
-                    {output_name}
-                   """
-
-        # リスト内の空白、改行コードを削除する。文字列に\nがあれば空白に置換する
-        filled = [i.replace('\n', '')
-                  for i in command.split(" ") if i and i != '\n']
-        platform = Values.PLATFORM.value.lower()
-        if platform == 'linux':
-            run(filled, shell=False, encoding='utf-8')
-        elif platform == 'win32':
-            run(filled, shell=True, encoding='utf-8')
-
-
 class Values(Enum):
     """
     グローバルで使える変数一覧
@@ -119,17 +55,26 @@ class Operation(object):
     @staticmethod
     def do_parse_args() -> dict:
         parser = ArgumentParser(description='You can use some arguments.')
-        parser.add_argument('-v', '--vcodec', default='copy',    type=str)
-        parser.add_argument('-a', '--acodec', default='copy',    type=str)
-        parser.add_argument('--tag',          default='hvc1',    type=str)
-        parser.add_argument('--size',         default='640x360', type=str)
-        parser.add_argument('--threads',      default=2,         type=int)
-        parser.add_argument('--fps',          default=30,        type=int)
-        parser.add_argument('--bitrate',      default=44100,     type=int)
-        parser.add_argument('--pix_fmt',      default='yuv420p', type=str)
-        parser.add_argument('--segment_time', default=10,        type=int)
-        parser.add_argument('--thumbnail',    action='store_true')
-        parser.add_argument('-j', '--concat', action='store_true')
+        parser.add_argument('-v', '--vcodec',
+                            default='copy',    type=str)
+        parser.add_argument('-a', '--acodec',
+                            default='copy',    type=str)
+        parser.add_argument(
+            '--tag',                default='hvc1',    type=str)
+        parser.add_argument(
+            '--size',               default='640x360', type=str)
+        parser.add_argument(
+            '--threads',            default=2,         type=int)
+        parser.add_argument(
+            '--fps',                default=30,        type=int)
+        parser.add_argument(
+            '--bitrate',            default=44100,     type=int)
+        parser.add_argument(
+            '--pix_fmt',            default='yuv420p', type=str)
+        parser.add_argument('--segment_time',
+                            default=10,        type=int)
+        parser.add_argument('--thumbnail',          action='store_true')
+        parser.add_argument('-c', '-j', '--concat', action='store_true')
         return vars(parser.parse_args())
 
     @staticmethod
