@@ -33,7 +33,8 @@ class Default(object):
         self.tag: str = tag if tag else "hvc1"
         self.pix_fmt: str = pix_fmt if pix_fmt else "yuv420p"
         now = str(datetime.now()).translate(
-            str.maketrans({'-': '_', ' ': '_', '.': '_'}))
+            str.maketrans({'-': '_', ' ': '_', '.': '_'})
+        )
         self.file_name: str = file_name if file_name else f"{now}.txt"
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
         self.size: str = size
