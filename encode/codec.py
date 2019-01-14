@@ -72,7 +72,7 @@ class Default(object):
                             encoding='utf-8')
 
 
-class h265(Default):
+class Others(Default):
     def command_create(self):
         command = f"ffmpeg -i {self.source} -c:v {self.vcodec} -tag:v {self.tag} "\
                   f"-s {self.size} -r {self.fps} "\

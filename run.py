@@ -1,7 +1,7 @@
 from os import rename
 from os.path import join
 from encode.codec import hls
-from encode.codec import h265
+from encode.codec import Others
 from encode.codec import Concat
 from operation.files import Values
 from operation.files import Operation
@@ -30,6 +30,7 @@ def main():
             raise OSError
         else:
             if isjoin:
+                # 動画の結合
                 encode = Concat(
                     vcodec=vcodec,
                     acodec=acodec,
@@ -44,7 +45,7 @@ def main():
                 encode.run()
                 return
             elif args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
-                print('hls or m3u8形式のエンコードにはlibx264のみ利用しています...')
+                # hls形式のストリーミングファイルを作成
                 encode = hls(
                     source=fixed,
                     dest=join('m3u8', fixed),
@@ -59,7 +60,8 @@ def main():
                     segment_time=segment_time,
                 )
             else:
-                encode = h265(
+                # 他のコーデック形式への変換
+                encode = Others(
                     source=fixed,
                     dest=join(vcodec, fixed),
                     vcodec=vcodec,
