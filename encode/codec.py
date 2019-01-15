@@ -75,7 +75,7 @@ class Default(object):
         name, ext = splitext(source)
         if '.iso' == ext.lower():
             source = name + '.mp4'
-            dest = join(dest, source)
+        dest = join(dest, source)
 
         return dest
 
@@ -89,7 +89,7 @@ class Others(Default):
                   f"-c:a {self.acodec} -ar {self.bitrate} "\
                   f"-threads {self.threads} "\
                   f"-pix_fmt {self.pix_fmt} "\
-                  f"-map 0:1 -map: 0:2 "\
+                  f"-map 0:v -map: 0:a "\
                   f"{dest}"
         return command.split(" ")
 
