@@ -71,15 +71,26 @@ class Default(object):
                             shell=shell,
                             encoding='utf-8')
 
+    def do_extension_fix_iso(self, source: str, dest: str) -> str:
+        name, ext = splitext(source)
+        if '.iso' == ext.lower():
+            source = name + '.mp4'
+            dest = join(dest, source)
+
+        return dest
+
 
 class Others(Default):
     def command_create(self):
-        command = f"ffmpeg -i {self.source} -c:v {self.vcodec} -tag:v {self.tag} "\
+        dest = self.do_extension_fix_iso(source=self.source, dest=self.dest)
+        command = f"ffmpeg -i {self.source} "\
+                  f"-c:v {self.vcodec} -tag:v {self.tag} "\
                   f"-s {self.size} -r {self.fps} "\
                   f"-c:a {self.acodec} -ar {self.bitrate} "\
                   f"-threads {self.threads} "\
                   f"-pix_fmt {self.pix_fmt} "\
-                  f"{join(self.dest, self.source)}"
+                  f"-map 0:1 -map: 0:2 "\
+                  f"{dest}"
         return command.split(" ")
 
 

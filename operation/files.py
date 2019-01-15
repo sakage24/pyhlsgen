@@ -46,7 +46,7 @@ class Values(Enum):
     ALLOWED_EXTENSION: tuple = (
         '.mp4', '.m4v', '.mkv', '.wmv',
         '.avi', '.flv', '.mov', '.mpeg',
-        '.asf', '.vob')
+        '.asf', '.vob', '.iso')
     SOURCE_FILE_DIRECTORY: str = '.'
     DESTINATION_FILE_DIRECTORY: str = 'm3u8'
 
