@@ -15,7 +15,7 @@ class Crop(object):
     def thumbnail(self,
                   source: str,
                   target_dir: str,
-                  ss: int = '00:00:08',
+                  ss: int = '00:00:15',
                   size: str = '256x192',
                   output_file_name: str = "thumbnail_%06d.jpg",
                   platform: str = "linux"):
@@ -46,7 +46,7 @@ class Values(Enum):
     ALLOWED_EXTENSION: tuple = (
         '.mp4', '.m4v', '.mkv', '.wmv',
         '.avi', '.flv', '.mov', '.mpeg',
-        '.asf', '.vob')
+        '.asf', '.vob', '.iso')
     SOURCE_FILE_DIRECTORY: str = '.'
     DESTINATION_FILE_DIRECTORY: str = 'm3u8'
 
@@ -55,25 +55,16 @@ class Operation(object):
     @staticmethod
     def do_parse_args() -> dict:
         parser = ArgumentParser(description='You can use some arguments.')
-        parser.add_argument('-v', '--vcodec',
-                            default='libx265', type=str)
-        parser.add_argument('-a', '--acodec',
-                            default='copy',    type=str)
-        parser.add_argument(
-            '--tag',                default='hvc1',    type=str)
-        parser.add_argument(
-            '--size',               default='640x480', type=str)
-        parser.add_argument(
-            '--threads',            default=2,         type=int)
-        parser.add_argument(
-            '--fps',                default=30,        type=int)
-        parser.add_argument(
-            '--bitrate',            default=44100,     type=int)
-        parser.add_argument(
-            '--pix_fmt',            default='yuv420p', type=str)
-        parser.add_argument('--segment_time',
-                            default=10,        type=int)
-        parser.add_argument('--thumbnail',          action='store_true')
+        parser.add_argument('-v', '--vcodec', default='libx265', type=str)
+        parser.add_argument('-a', '--acodec', default='ac3',    type=str)
+        parser.add_argument('--tag', default='hvc1', type=str)
+        parser.add_argument('--size', default='720x478', type=str)
+        parser.add_argument('--threads', default=2, type=int)
+        parser.add_argument('--fps', default=30, type=int)
+        parser.add_argument('--bitrate', default=44100, type=int)
+        parser.add_argument('--pix_fmt', default='yuv420p', type=str)
+        parser.add_argument('--segment_time', default=10, type=int)
+        parser.add_argument('--thumbnail', action='store_true')
         parser.add_argument('-c', '-j', '--concat', action='store_true')
         return vars(parser.parse_args())
 
@@ -130,14 +121,12 @@ class Operation(object):
         fixed: str
             変換後のファイル名。
         """
-        chars: tuple = (' ', '　', '＿', '\\', '￥',)
+        chars: tuple = (' ', '　', '＿', '\\', '￥', ':')
         fixed: str = ""
 
         for n in name:
             try:
-                if n in chars:
-                    fixed += '_'
-                elif 0x2600 <= ord(n) <= 0x26ff or n == '？':
+                if n in chars or 0x2600 <= ord(n) <= 0x26ff or n == '？':
                     fixed += '_'
                 elif n == '（' or n == '【':
                     fixed += '('

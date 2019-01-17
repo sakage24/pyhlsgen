@@ -13,7 +13,7 @@ class Default(object):
     def __init__(self,
                  source: str = ".",
                  dest: str = ".",
-                 size: str = '640x360',
+                 size: str = '720x478',
                  vcodec: str = "",
                  acodec: str = "",
                  tag: str = "",
@@ -28,12 +28,13 @@ class Default(object):
         self.source: str = source
         self.dest: str = dest
         self.size: str = size
-        self.vcodec: str = vcodec if vcodec else "libx264"
+        self.vcodec: str = vcodec if vcodec else "libx265"
         self.acodec: str = acodec if acodec else "copy"
         self.tag: str = tag if tag else "hvc1"
         self.pix_fmt: str = pix_fmt if pix_fmt else "yuv420p"
         now = str(datetime.now()).translate(
-            str.maketrans({'-': '_', ' ': '_', '.': '_'}))
+            str.maketrans({'-': '_', ' ': '_', '.': '_'})
+        )
         self.file_name: str = file_name if file_name else f"{now}.txt"
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
         self.size: str = size
@@ -70,15 +71,26 @@ class Default(object):
                             shell=shell,
                             encoding='utf-8')
 
+    def do_extension_fix_iso(self, source: str, dest: str) -> str:
+        name, ext = splitext(source)
+        if '.iso' == ext.lower():
+            source = name + '.mp4'
+        dest = join(dest, source)
 
-class h265(Default):
+        return dest
+
+
+class Others(Default):
     def command_create(self):
-        command = f"ffmpeg -i {self.source} -c:v {self.vcodec} -tag:v {self.tag} "\
+        dest = self.do_extension_fix_iso(source=self.source, dest=self.dest)
+        command = f"ffmpeg -i {self.source} "\
+                  f"-c:v {self.vcodec} -tag:v {self.tag} "\
                   f"-s {self.size} -r {self.fps} "\
                   f"-c:a {self.acodec} -ar {self.bitrate} "\
                   f"-threads {self.threads} "\
                   f"-pix_fmt {self.pix_fmt} "\
-                  f"{join(self.dest, self.source)}"
+                  f"-map 0:v -map: 0:a "\
+                  f"{dest}"
         return command.split(" ")
 
 
