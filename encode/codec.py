@@ -53,7 +53,7 @@ class Default(object):
                 encoding=encoding)
         run(command, shell=shell, encoding=encoding)
 
-    def run(self, thumbnail=False):
+    def run(self, thumbnail: bool = False, noaudio: bool = False):
         output = join(self.vcodec, splitext(self.source)[0])
         ops = Operation()
         ops.make_directory(output)
@@ -66,7 +66,7 @@ class Default(object):
         else:
             shell = False
 
-        self.subprocess_run(command=self.command_create(),
+        self.subprocess_run(command=self.command_create(noaudio=noaudio),
                             shell=shell,
                             encoding='utf-8')
 
@@ -80,7 +80,8 @@ class Default(object):
 
 
 class Others(Default):
-    def command_create(self):
+    def command_create(self, noaudio: bool = False):
+        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         dest = self.do_extension_fix_iso(source=self.source, dest=self.dest)
         command = f"ffmpeg -i {self.source} "\
                   f"-c:v {self.vcodec} -tag:v {self.tag} "\
@@ -88,19 +89,20 @@ class Others(Default):
                   f"-c:a {self.acodec} -ar {self.bitrate} "\
                   f"-threads {self.threads} "\
                   f"-pix_fmt {self.pix_fmt} "\
-                  f"-map 0:v -map: 0:a "\
+                  f"{media_map} "\
                   f"{dest}"
         return command.split(" ")
 
 
 class hls(Default):
-    def command_create(self):
+    def command_create(self, noaudio: bool = False):
+        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         command = f"ffmpeg -i "\
             f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
             f"-max_muxing_queue_size 1024 "\
             f"-c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} "\
             f"-vbsf h264_mp4toannexb "\
-            f"-pix_fmt {self.pix_fmt} -map 0:0 -map 0:1 "\
+            f"-pix_fmt {self.pix_fmt} {media_map} "\
             f"-c:a {self.acodec} -ar {self.bitrate} "\
             f"-threads {self.threads} "\
             f"-f segment -segment_format mpegts "\
@@ -136,7 +138,8 @@ class Concat(Default):
         except OSError:
             pass
 
-    def command_create(self):
+    def command_create(self, noaudio: bool = False):
+        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         self.write_concat_text()
         command = f"""
                     ffmpeg -f concat -safe 0 -i {self.file_name} \
@@ -144,7 +147,7 @@ class Concat(Default):
                     -pix_fmt {self.pix_fmt} \
                     -c:a {self.acodec} -ar {self.bitrate} \
                     -c:s copy \
-                    -map 0:v -map 0:a -map 0:s? \
+                    {media_map} -map 0:s? \
                     -threads {self.threads} \
                     {self.concat_name}
                    """

@@ -20,6 +20,7 @@ def main():
     bitrate:      int = args['bitrate']
     segment_time: int = args['segment_time']
     thumbnail:    bool = args['thumbnail']
+    noaudio:      bool = args['noaudio']
     isjoin:       bool = args['concat']
 
     for f in ops.get_movie_list():
@@ -75,7 +76,7 @@ def main():
                     segment_time=segment_time,
                 )
 
-            encode.run(thumbnail=thumbnail)
+            encode.run(thumbnail=thumbnail, noaudio=noaudio)
 
 
 main()
