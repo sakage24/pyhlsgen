@@ -11,23 +11,23 @@ from datetime import datetime
 
 class Default(object):
     def __init__(self,
-                 source: str = ".",
-                 dest: str = ".",
-                 size: str = '720x478',
-                 vcodec: str = "",
-                 acodec: str = "",
-                 tag: str = "",
-                 pix_fmt: str = "",
+                 source: str = '.',
+                 dest: str = '.',
+                 size: str = '',
+                 vcodec: str = '',
+                 acodec: str = '',
+                 tag: str = '',
+                 pix_fmt: str = '',
                  file_name: str = '',
                  concat_name: str = '',
                  threads: int = 0,
                  fps: int = 0,
-                 bitrate: int = "",
+                 bitrate: int = 0,
                  segment_time: int = 0,
                  ):
         self.source: str = source
         self.dest: str = dest
-        self.size: str = size
+        self.size: str = size if size else '720x428'
         self.vcodec: str = vcodec if vcodec else "libx265"
         self.acodec: str = acodec if acodec else "copy"
         self.tag: str = tag if tag else "hvc1"
@@ -37,7 +37,6 @@ class Default(object):
         )
         self.file_name: str = file_name if file_name else f"{now}.txt"
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
-        self.size: str = size
         self.command: str = ""
         self.segment_time: int = segment_time if segment_time else 10
         self.threads: int = threads if source else 2
