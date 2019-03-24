@@ -81,7 +81,7 @@ class Default(object):
 
 class Others(Default):
     def command_create(self, noaudio: bool = False):
-        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         dest = self.do_extension_fix_iso(source=self.source, dest=self.dest)
         command = f"ffmpeg -i {self.source} "\
                   f"-c:v {self.vcodec} -tag:v {self.tag} "\
@@ -96,7 +96,7 @@ class Others(Default):
 
 class hls(Default):
     def command_create(self, noaudio: bool = False):
-        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         command = f"ffmpeg -i "\
             f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
             f"-max_muxing_queue_size 1024 "\
@@ -139,7 +139,7 @@ class Concat(Default):
             pass
 
     def command_create(self, noaudio: bool = False):
-        media_map: str =  "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
         self.write_concat_text()
         command = f"""
                     ffmpeg -f concat -safe 0 -i {self.file_name} \
