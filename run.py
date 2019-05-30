@@ -1,3 +1,4 @@
+#! /usr/bin/python3.7
 from os import rename
 from os.path import join
 from encode.codec import hls

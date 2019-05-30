@@ -56,9 +56,9 @@ class Operation(object):
     def do_parse_args() -> dict:
         parser = ArgumentParser(description='You can use some arguments.')
         parser.add_argument('-v', '--vcodec', default='libx265', type=str)
-        parser.add_argument('-a', '--acodec', default='ac3',    type=str)
+        parser.add_argument('-a', '--acodec', default='copy',    type=str)
         parser.add_argument('--tag', default='hvc1', type=str)
-        parser.add_argument('--size', default='720x478', type=str)
+        parser.add_argument('--size', default='hd720', type=str)
         parser.add_argument('--threads', default=2, type=int)
         parser.add_argument('--fps', default=30, type=int)
         parser.add_argument('--bitrate', default=44100, type=int)

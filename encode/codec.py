@@ -13,35 +13,35 @@ class Default(object):
     def __init__(self,
                  source: str = '.',
                  dest: str = '.',
-                 size: str = '',
-                 vcodec: str = '',
-                 acodec: str = '',
-                 tag: str = '',
-                 pix_fmt: str = '',
+                 size: str = 'hd720',
+                 vcodec: str = 'libx265',
+                 acodec: str = 'copy',
+                 tag: str = 'hvc1',
+                 pix_fmt: str = 'yuv40p',
                  file_name: str = '',
                  concat_name: str = '',
-                 threads: int = 0,
-                 fps: int = 0,
-                 bitrate: int = 0,
-                 segment_time: int = 0,
+                 threads: int = 2,
+                 fps: int = 24,
+                 bitrate: int = 44100,
+                 segment_time: int = 10,
                  ):
         self.source: str = source
         self.dest: str = dest
-        self.size: str = size if size else '720x428'
-        self.vcodec: str = vcodec if vcodec else "libx265"
-        self.acodec: str = acodec if acodec else "copy"
-        self.tag: str = tag if tag else "hvc1"
-        self.pix_fmt: str = pix_fmt if pix_fmt else "yuv420p"
+        self.size: str = size
+        self.vcodec: str = vcodec
+        self.acodec: str = acodec
+        self.tag: str = tag
+        self.pix_fmt: str = pix_fmt
         now = str(datetime.now()).translate(
             str.maketrans({'-': '_', ' ': '_', '.': '_'})
         )
         self.file_name: str = file_name if file_name else f"{now}.txt"
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
         self.command: str = ""
-        self.segment_time: int = segment_time if segment_time else 10
-        self.threads: int = threads if source else 2
-        self.fps: int = fps if fps else 24
-        self.bitrate: int = bitrate if bitrate else 44100
+        self.segment_time = segment_time
+        self.threads: int = threads
+        self.fps: int = fps
+        self.bitrate: int = bitrate
 
     def subprocess_run(self,
                        command: str,
