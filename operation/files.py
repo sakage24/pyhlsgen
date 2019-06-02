@@ -122,12 +122,12 @@ class Operation(object):
         fixed: str
             変換後のファイル名。
         """
-        chars: tuple = (' ', '　', '＿', '\\', '￥', ':')
+        chars: tuple = (' ', '　', '＿', '\\', '￥', ':', '？')
         fixed: str = ""
 
         for n in name:
             try:
-                if n in chars or 0x2600 <= ord(n) <= 0x26ff or n == '？':
+                if n in chars or 0x2600 <= ord(n) <= 0x26ff:
                     fixed += '_'
                 elif n == '（' or n == '【':
                     fixed += '('
