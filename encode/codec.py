@@ -13,7 +13,7 @@ class Default(object):
     def __init__(self,
                  source: str = '.',
                  dest: str = '.',
-                 size: str = 'hd720',
+                 size: str = 'hd480',
                  vcodec: str = 'libx265',
                  acodec: str = 'copy',
                  tag: str = 'hvc1',

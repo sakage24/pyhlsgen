@@ -1,11 +1,8 @@
 #! /usr/bin/python3.7
 from os import rename
 from os.path import join
-from encode.codec import hls
-from encode.codec import Others
-from encode.codec import Concat
-from operation.files import Values
-from operation.files import Operation
+from encode.codec import hls, Others, Concat
+from operation.files import Values, Operation
 
 
 def main():
