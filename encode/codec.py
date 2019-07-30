@@ -21,7 +21,7 @@ class Default(object):
                  file_name: str = '',
                  concat_name: str = '',
                  threads: int = 2,
-                 fps: int = 24,
+                 fps: int = 60,
                  bitrate: int = 44100,
                  segment_time: int = 10,
                  ):

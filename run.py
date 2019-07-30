@@ -1,4 +1,5 @@
-#! /usr/bin/python3.7
+#!/home/kiwi/.pyenv/shims/python
+
 from os import rename
 from os.path import join
 from encode.codec import hls, Others, Concat
