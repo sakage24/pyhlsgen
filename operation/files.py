@@ -8,7 +8,6 @@ from sys import platform
 from enum import Enum
 from subprocess import run
 from argparse import ArgumentParser
-import cv2
 
 
 class Crop(object):
@@ -70,13 +69,6 @@ class Operation(object):
         parser.add_argument('--hls', action='store_true')
         parser.add_argument('-c', '-j', '--concat', action='store_true')
         return vars(parser.parse_args())
-
-    @staticmethod
-    def get_movie_sec(path: str) -> int:
-        v = cv2.VideoCapture(path)
-        frame = v.get(cv2.CAP_PROP_FRAME_COUNT)  # フレーム数を取得する
-        fps = v.get(cv2.CAP_PROP_FPS)           # FPS を取得する
-        return frame // fps
 
     @staticmethod
     def get_exts(codec: str) -> str:
