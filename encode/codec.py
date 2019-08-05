@@ -7,24 +7,24 @@ from operation.files import Values
 from operation.files import Operation
 from operation.files import Crop
 from datetime import datetime
+from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 
 
 class Default(object):
     def __init__(self,
-                 source: str = '.',
-                 dest: str = '.',
-                 size: str = 'hd480',
-                 vcodec: str = 'libx265',
-                 acodec: str = 'copy',
-                 tag: str = 'hvc1',
-                 pix_fmt: str = 'yuv40p',
+                 source: str,
+                 dest: str,
+                 size: str,
+                 vcodec: str,
+                 acodec: str,
+                 tag: str,
+                 pix_fmt: str,
+                 threads: int,
+                 fps: int,
+                 bitrate: int,
+                 segment_time: int,
                  file_name: str = '',
-                 concat_name: str = '',
-                 threads: int = 2,
-                 fps: int = 60,
-                 bitrate: int = 44100,
-                 segment_time: int = 10,
-                 ):
+                 concat_name: str = '',):
         self.source: str = source
         self.dest: str = dest
         self.size: str = size
@@ -42,6 +42,12 @@ class Default(object):
         self.threads: int = threads
         self.fps: int = fps
         self.bitrate: int = bitrate
+
+    def get_video_size(self, path: str) -> tuple:
+        video = VideoCapture(path)
+        width = int(video.get(CAP_PROP_FRAME_WIDTH))
+        height = int(video.get(CAP_PROP_FRAME_HEIGHT))
+        return width, height
 
     def subprocess_run(self,
                        command: str,
@@ -74,18 +80,24 @@ class Default(object):
         name, ext = splitext(source)
         if '.iso' == ext.lower():
             source = name + '.mp4'
-        dest = join(dest, source)
-
-        return dest
+        return join(dest, source)
 
 
 class Others(Default):
     def command_create(self, noaudio: bool = False):
         media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        if self.size:
+            video_size: str = self.size
+        else:
+            video_size: tuple = self.get_video_size(path=self.source)
+
+        if isinstance(video_size, tuple):
+            video_size: str = f"{video_size[0]}x{video_size[1]}"  # e.g.640x480
+
         dest = self.do_extension_fix_iso(source=self.source, dest=self.dest)
         command = f"ffmpeg -i {self.source} "\
                   f"-c:v {self.vcodec} -tag:v {self.tag} "\
-                  f"-s {self.size} -r {self.fps} "\
+                  f"-s {video_size} -r {self.fps} "\
                   f"-c:a {self.acodec} -ar {self.bitrate} "\
                   f"-threads {self.threads} "\
                   f"-pix_fmt {self.pix_fmt} "\
@@ -97,10 +109,18 @@ class Others(Default):
 class hls(Default):
     def command_create(self, noaudio: bool = False):
         media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        if self.size:
+            video_size: str = self.size
+        else:
+            video_size: tuple = self.get_video_size(path=self.source)
+
+        if isinstance(video_size, tuple):
+            video_size: str = f"{video_size[0]}x{video_size[1]}"  # e.g.640x480
+
         command = f"ffmpeg -i "\
             f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
             f"-max_muxing_queue_size 1024 "\
-            f"-c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} "\
+            f"-c:v {self.vcodec} -tag:v {self.tag} -s {video_size} -r {self.fps} "\
             f"-vbsf h264_mp4toannexb "\
             f"-pix_fmt {self.pix_fmt} {media_map} "\
             f"-c:a {self.acodec} -ar {self.bitrate} "\
@@ -140,10 +160,19 @@ class Concat(Default):
 
     def command_create(self, noaudio: bool = False):
         media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
+        if self.size:
+            video_size: str = self.size
+        else:
+            video_size: tuple = self.get_video_size(path=self.source)
+
+        if isinstance(video_size, tuple):
+            video_size: str = f"{video_size[0]}x{video_size[1]}"  # e.g.640x480
+
         self.write_concat_text()
         command = f"""
                     ffmpeg -f concat -safe 0 -i {self.file_name} \
-                    -c:v {self.vcodec} -tag:v {self.tag} -s {self.size} -r {self.fps} \
+                    -c:v {self.vcodec} -tag:v {self.tag} \
+                    -s {video_size} -r {self.fps} \
                     -pix_fmt {self.pix_fmt} \
                     -c:a {self.acodec} -ar {self.bitrate} \
                     -c:s copy \
