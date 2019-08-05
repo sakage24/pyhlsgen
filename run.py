@@ -20,6 +20,7 @@ def main():
     segment_time: int = args['segment_time']
     thumbnail:    bool = args['thumbnail']
     noaudio:      bool = args['noaudio']
+    hls_encode:   bool = args['hls']
     isjoin:       bool = args['concat']
 
     for f in ops.get_movie_list():
@@ -44,12 +45,12 @@ def main():
                 )
                 encode.run()
                 return
-            elif args['vcodec'] == 'hls' or args['vcodec'] == 'm3u8':
+            elif hls_encode:
                 # hls形式のストリーミングファイルを作成
                 encode = hls(
                     source=fixed,
                     dest=join('m3u8', fixed),
-                    vcodec='libx264',
+                    vcodec=vcodec,
                     acodec=acodec,
                     tag=tag,
                     size=size,

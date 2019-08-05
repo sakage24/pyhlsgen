@@ -66,6 +66,7 @@ class Operation(object):
         parser.add_argument('--segment_time', default=10, type=int)
         parser.add_argument('--thumbnail', action='store_true')
         parser.add_argument('--noaudio', action='store_true')
+        parser.add_argument('--hls', action='store_true')
         parser.add_argument('-c', '-j', '--concat', action='store_true')
         return vars(parser.parse_args())
 
