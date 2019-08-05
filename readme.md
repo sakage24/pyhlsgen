@@ -1,62 +1,111 @@
-# pygenhls
+# pyhlsgen
 
-This program converts video files of various formats quickly and easily into hls/m3u8 format.
+## `pyhlsgen`は`python`を利用して複雑な`ffmpeg`のコマンドを簡略化するラッパープログラムです。
 
-This program is a wrapper program of [ffmpeg](https://ffmpeg.org/). Therefore, you must install the latest version of [ffmpeg](https://ffmpeg.org/) and greater than [python3.6](https://www.python.org).
+- このプログラムの実行には[ffmpeg](https://ffmpeg.org/)が必要です。また、各種エンコーダもインストールされている必要があります。
+- 実行には[python3.6](https://www.python.org)以上の最新バージョンが望ましいです。
+- This program is a wrapper program of [ffmpeg](https://ffmpeg.org/). Therefore, you must install the latest version of [ffmpeg](https://ffmpeg.org/) and greater than [python3.6](https://www.python.org)
+
+## requirements
+
+以下の外部モジュールが必要になるので`pip`を使って外部モジュールをインストールして下さい。
+環境によっては権限の問題によりインストールが困難になる場合があるので、その場合は`--user`オプションを付与して下さい。
+
+```
+pip install -U pip setuptools [--user]
+pip install opencv-python [--user]
+```
+
+### Windows
+
+`ffmpeg.exe`が存在するディレクトリに**PATH**を通して下さい。
+
+### Ubuntu
+
+```bash
+sudo apt install ffmpeg
+```
+
+### CentOS
+
+`yum`からインストールした`ffmpeg`はバージョンがかなり古く、おそらく期待する動作をしないでしょう...。そのため、自身で`ffmpeg`と関連するコーデックをコンパイルしてインストールする必要があります。
 
 ## Usage
 
+動画ファイルと同じディレクトリで`run.py`を実行して下さい。
+
 ```bash
+> python run.py --help
+>----------------------<
 usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
-[--threads THREADS] [--fps FPS] [--bitrate BITRATE]
-[--pix_fmt PIX_FMT] [--segment_time SEGMENT_TIME] [--thumbnail]
-[-c]
+              [--threads THREADS] [--fps FPS] [--bitrate BITRATE]
+              [--pix_fmt PIX_FMT] [--segment_time SEGMENT_TIME] [--thumbnail]
+              [--noaudio] [--hls] [-c]
+
+You can use some arguments.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VCODEC, --vcodec VCODEC
+  -a ACODEC, --acodec ACODEC
+  --tag TAG
+  --size SIZE
+  --threads THREADS
+  --fps FPS
+  --bitrate BITRATE
+  --pix_fmt PIX_FMT
+  --segment_time SEGMENT_TIME
+  --thumbnail
+  --noaudio
+  --hls
+  -c, -j, --concat
+usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
+>----------------------<
 ```
 
-### * -> m3u8
+### デフォルトのパラメーター
 
-1. Put in the source files in the same directory as the sctipts.
-1. run script.
-    - `py genhls.py`
-    - run backgrounds
-        - `nohup python3 genhls.py &`
-1. `m3u8/YOUR_SOURCE_FILES` directory will be generated.
+```
+'-v', '--vcodec', default='libx265'
+'-a', '--acodec', default='copy',
+'--tag', default='copy',  # libx265でエンコードする場合、hvc1に設定すると良いです。
+'--size',　# デフォルトでは、元動画ファイルのheight, widthをセット。 # e.g. 1270x780, 720x480, hd720, hd480...
+'--threads', default=2,  # エンコードに利用するcpuコア数。
+'--fps', default=30,
+'--bitrate', default=44100,
+'--pix_fmt', default='yuv420p',
+'--segment_time', default=10,
+'--thumbnail'  # thumbnailを同時に生成する。
+'--noaudio'  # 音声ファイルを無視する。
+'--hls' m3u8形式の疑似ストリーミングファイルへと変換する。
+'-c', '-j', '--concat' 動画の結合(不安定)
+```
 
-### * -> convert to other codecs
+### e.g. h265形式へのエンコード
 
-##### syntax
+```bash
+py run.py --tag hvc1
+```
 
-`py genhls.py "video_codec" "audio_codec(Optional)"`
+### e.g. hls形式へのエンコード
 
-#### example
+`hls`へのエンコードは何故か`libx265`コーデックを利用するとおかしな動作を起こすので、`libx264`を利用しています。
 
-##### convert to libx265(audio codec would copy.)
+```bash
+py run.py -v libx264 --hls
+```
 
-`py genhls.py libx265`
+### e.g. h265形式へのエンコード + 動画サムネイルの生成
 
-##### convert to libx265(audio codec would copy.)
+```bash
+py run.py --tag hvc1 --thumbnail
 
-`py genhls.py libx265 copy`
+```
 
-##### convert to libx264 and ac3 codecs.
+## サークル紹介
 
-`py genhls.py libx264 ac3`
+### Operation KIWI
 
-## convert flow
-
-- mp4(libx264) -> copy -> m3u8
-- mp4(libx265) -> libx264 -> m3u8
-- other codeces -> libx264 -> m3u8
-
-## output
-
-`./m3u8/YOUR_SOURCE__MOVIE_FILE__NAME/output.m3u8, stream-0000001.ts, ...`
-
-
-## link
-
-[Operation KIWI](https://www.kiwi-bird.xyz/)
-
-
-I have been created [Hentai-Action-Games](http://www.dlsite.com/maniax/dlaf/=/link/work/aid/kiwibird/id/RJ205597.html).
-
+- サークル代表 kiwi
+- [ 公式サイト](https://www.kiwi-bird.xyz/)
+- [Twitter](https://twitter.com/Ops_kiwi/)
