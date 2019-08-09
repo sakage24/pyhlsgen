@@ -64,6 +64,7 @@ class Operation(object):
         parser.add_argument('--bitrate', default=44100, type=int)
         parser.add_argument('--pix_fmt', default='yuv420p', type=str)
         parser.add_argument('--segment_time', default=10, type=int)
+        parser.add_argument('-fs', '--limit_size', default='1024', type=str)
         parser.add_argument('--thumbnail', action='store_true')
         parser.add_argument('--noaudio', action='store_true')
         parser.add_argument('--hls', action='store_true')

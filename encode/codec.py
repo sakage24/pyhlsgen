@@ -23,6 +23,7 @@ class Default(object):
                  fps: int,
                  bitrate: int,
                  segment_time: int,
+                 limit_size: str = '',
                  file_name: str = '',
                  concat_name: str = '',):
         self.source: str = source
@@ -39,6 +40,7 @@ class Default(object):
         self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
         self.command: str = ""
         self.segment_time = segment_time
+        self.limit_size = limit_size
         self.threads: int = threads
         self.fps: int = fps
         self.bitrate: int = bitrate
@@ -120,7 +122,9 @@ class hls(Default):
         command = f"ffmpeg -i "\
             f"{join(Values.SOURCE_FILE_DIRECTORY.value, self.source)} "\
             f"-max_muxing_queue_size 1024 "\
-            f"-c:v {self.vcodec} -tag:v {self.tag} -s {video_size} -r {self.fps} "\
+            f"-c:v {self.vcodec} -tag:v {self.tag} "\
+            f"-fs {self.limit_size} " \
+            f"-s {video_size} -r {self.fps} "\
             f"-vbsf h264_mp4toannexb "\
             f"-pix_fmt {self.pix_fmt} {media_map} "\
             f"-c:a {self.acodec} -ar {self.bitrate} "\
@@ -146,7 +150,9 @@ class Concat(Default):
                     yield (entry.name)
 
     def write_concat_text(self, path: str = '.'):
-        with open(file=join(path, self.file_name), mode='wt', encoding='utf-8') as fp:
+        with open(file=join(path, self.file_name),
+                  mode='wt',
+                  encoding='utf-8') as fp:
             movie = []
             for i in self.__get_movie_list(path=path):
                 movie.append(join(path, i))

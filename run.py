@@ -14,6 +14,7 @@ def main():
     tag:          str = args['tag']
     size:         str = args['size']
     pix_fmt:      str = args['pix_fmt']
+    limit_size:   str = args['limit_size']
     threads:      int = args['threads']
     fps:          int = args['fps']
     bitrate:      int = args['bitrate']
@@ -59,6 +60,7 @@ def main():
                     bitrate=bitrate,
                     pix_fmt=pix_fmt,
                     segment_time=segment_time,
+                    limit_size=limit_size,
                 )
             else:
                 # 他のコーデック形式への変換
