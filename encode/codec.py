@@ -1,19 +1,13 @@
 from subprocess import run
-from os import chmod
-from os import scandir
-from os.path import join
-from os.path import splitext
-from operation.files import Values
-from operation.files import Operation
-from operation.files import Crop
+from os import chmod, scandir
+from os.path import join, splitext
+from operation.files import Values, Operation, Crop
 from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 
 
 class Default(object):
     def __init__(self,
-                 source: str,
-                 dest: str,
                  size: str,
                  vcodec: str,
                  acodec: str,
@@ -23,6 +17,8 @@ class Default(object):
                  fps: int,
                  bitrate: int,
                  segment_time: int,
+                 source: str = '',
+                 dest: str = '',
                  limit_size: str = '',
                  file_name: str = '',
                  concat_name: str = '',):

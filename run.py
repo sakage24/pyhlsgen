@@ -48,6 +48,7 @@ def main():
                 return
             elif hls_encode:
                 # hls形式のストリーミングファイルを作成
+                thumbnail = True
                 encode = hls(
                     source=fixed,
                     dest=join('m3u8', fixed),
