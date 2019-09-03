@@ -14,7 +14,7 @@ class Crop(object):
     def thumbnail(self,
                   source: str,
                   target_dir: str,
-                  ss: int = '00:00:15',
+                  ss: str = '00:00:15',
                   size: str = '256x192',
                   output_file_name: str = "thumbnail_%06d.jpg",
                   platform: str = "linux"):
