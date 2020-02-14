@@ -151,12 +151,12 @@ class Concat(Default):
                   encoding='utf-8') as fp:
             movie = []
             for i in self.__get_movie_list(path=path):
-                movie.append(join(path, i))
+                movie.append(i)
 
             # 昇順でソートしてからテキストファイルに書き込みする
             [fp.write(f"file '{i}'\n") for i in sorted(movie)]
         try:
-            chmod(self.file_name, 0o704)
+            chmod(self.file_name, 0o700)
         except OSError:
             pass
 

@@ -54,7 +54,7 @@ class Operation(object):
     @staticmethod
     def do_parse_args() -> dict:
         parser = ArgumentParser(description='You can use some arguments.')
-        parser.add_argument('-v', '--vcodec', default='libx265', type=str)
+        parser.add_argument('-v', '--vcodec', default='copy', type=str)
         parser.add_argument('-a', '--acodec', default='copy',    type=str)
         # tagについて!! libx265 == hvc1 or hevc
         parser.add_argument('--tag', default='copy', type=str)
