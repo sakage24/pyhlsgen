@@ -107,5 +107,5 @@ py run.py --tag hvc1 --thumbnail
 ### Operation KIWI
 
 - サークル代表 kiwi
-- [ 公式サイト](https://www.kiwi-bird.xyz/)
+- [ 公式サイト](https://www.opskiwi.work/)
 - [Twitter](https://twitter.com/Ops_kiwi/)
