@@ -1,7 +1,7 @@
 from os import rename
 from os.path import join
-from encode.codec import hls, Others, Concat
-from operation.files import Values, Operation
+from codec import hls, Others, Concat
+from files import Values, Operation
 
 
 def main():

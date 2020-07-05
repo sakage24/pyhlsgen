@@ -1,7 +1,7 @@
 from subprocess import run
 from os import chmod, scandir
 from os.path import join, splitext
-from operation.files import Values, Operation, Crop
+from files import Values, Operation, Crop
 from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 
