@@ -40,7 +40,7 @@ sudo apt install ffmpeg
 usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
               [--threads THREADS] [--fps FPS] [--bitrate BITRATE]
               [--pix_fmt PIX_FMT] [--segment_time SEGMENT_TIME] [--thumbnail]
-              [--noaudio] [--hls] [-c]
+              [--noaudio] [--hls]
 
 You can use some arguments.
 
@@ -58,7 +58,6 @@ optional arguments:
   --thumbnail
   --noaudio
   --hls
-  -c, -j, --concat
 usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
 >----------------------<
 ```
@@ -78,7 +77,6 @@ usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
 '--thumbnail'  # thumbnailを同時に生成する。
 '--noaudio'  # 音声ファイルを無視する。
 '--hls' m3u8形式の疑似ストリーミングファイルへと変換する。
-'-c', '-j', '--concat' 動画の結合(不安定)
 ```
 
 ### e.g. h265形式へのエンコード
@@ -87,19 +85,19 @@ usage: run.py [-h] [-v VCODEC] [-a ACODEC] [--tag TAG] [--size SIZE]
 py run.py --tag hvc1
 ```
 
-### e.g. hls形式へのエンコード
-
-`hls`へのエンコードは何故か`libx265`コーデックを利用するとおかしな動作を起こすので、`libx264`を利用しています。
-
-```bash
-py run.py -v libx264 --hls
-```
-
 ### e.g. h265形式へのエンコード + 動画サムネイルの生成
 
 ```bash
 py run.py --tag hvc1 --thumbnail
 
+```
+
+### e.g. hls形式へのエンコード
+
+`hls`へのエンコードは何故か`libx265`コーデックを利用するとおかしな動作を起こすので、`libx264`を利用しています。
+
+```bash
+py run.py -v libx264 --hls --thumbnail
 ```
 
 ## サークル紹介
