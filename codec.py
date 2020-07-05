@@ -7,39 +7,24 @@ from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 
 
 class Default(object):
-    def __init__(self,
-                 size: str,
-                 vcodec: str,
-                 acodec: str,
-                 tag: str,
-                 pix_fmt: str,
-                 threads: int,
-                 fps: int,
-                 bitrate: int,
-                 segment_time: int,
-                 source: str = '',
-                 dest: str = '',
-                 limit_size: str = '',
-                 file_name: str = '',
-                 concat_name: str = '',):
+    def __init__(self, source, dest):
+        args = Operation.do_parse_args()
         self.source: str = source
         self.dest: str = dest
-        self.size: str = size
-        self.vcodec: str = vcodec
-        self.acodec: str = acodec
-        self.tag: str = tag
-        self.pix_fmt: str = pix_fmt
-        now = str(datetime.now()).translate(
-            str.maketrans({'-': '_', ' ': '_', '.': '_'})
-        )
-        self.file_name: str = file_name if file_name else f"{now}.txt"
-        self.concat_name: str = concat_name if concat_name else f"{now}.mp4"
+        self.size: str = args['size']
+        self.vcodec: str = args['vcodec']
+        self.acodec: str = args['acodec']
+        self.tag: str = args['tag']
+        self.pix_fmt: str = args['pix_fmt']
         self.command: str = ""
-        self.segment_time = segment_time
-        self.limit_size = limit_size
-        self.threads: int = threads
-        self.fps: int = fps
-        self.bitrate: int = bitrate
+        self.segment_time = args['segment_time']
+        self.limit_size = args['limit_size']
+        self.threads: int = args['threads']
+        self.fps: int = args['fps']
+        self.bitrate: int = args['bitrate']
+        self.ishls: bool = args['hls']
+        self.noaudio: bool = args['noaudio']
+        self.thumbnail: bool = args['thumbnail']
 
     def get_video_size(self, path: str) -> tuple:
         video = VideoCapture(path)
@@ -57,12 +42,12 @@ class Default(object):
                 encoding=encoding)
         run(command, shell=shell, encoding=encoding)
 
-    def run(self, thumbnail: bool = False, noaudio: bool = False):
+    def run(self):
         output = join(self.vcodec, splitext(self.source)[0])
+        self.dest = output
         ops = Operation()
         ops.make_directory(output)
-        self.dest = output
-        if thumbnail:
+        if self.thumbnail:
             crop = Crop()
             crop.thumbnail(source=self.source, target_dir=output)
         if Values.SOURCE_FILE_DIRECTORY.value == 'win32':
@@ -70,7 +55,7 @@ class Default(object):
         else:
             shell = False
 
-        self.subprocess_run(command=self.command_create(noaudio=noaudio),
+        self.subprocess_run(command=self.command_create(noaudio=self.noaudio),
                             shell=shell,
                             encoding='utf-8')
 
@@ -130,60 +115,3 @@ class hls(Default):
             f"-segment_list {join(self.dest, 'output.m3u8')} " \
             f"{join(self.dest, 'stream-%06d.ts')}"
         return command.split(" ")
-
-
-class Concat(Default):
-    def __get_movie_list(self, path: str = '.') -> iter:
-        """
-        結合する動画一覧を返す
-        """
-        with scandir(path) as it:
-            for entry in it:
-                if not entry.name.startswith('.')\
-                   and entry.is_file()\
-                   and splitext(entry.name)[1]\
-                   in Values.ALLOWED_EXTENSION.value:
-                    yield (entry.name)
-
-    def write_concat_text(self, path: str = '.'):
-        with open(file=join(path, self.file_name),
-                  mode='wt',
-                  encoding='utf-8') as fp:
-            movie = []
-            for i in self.__get_movie_list(path=path):
-                movie.append(i)
-
-            # 昇順でソートしてからテキストファイルに書き込みする
-            [fp.write(f"file '{i}'\n") for i in sorted(movie)]
-        try:
-            chmod(self.file_name, 0o700)
-        except OSError:
-            pass
-
-    def command_create(self, noaudio: bool = False):
-        media_map: str = "-map 0:v" if noaudio else "-map 0:v -map: 0:a"
-        if self.size:
-            video_size: str = self.size
-        else:
-            video_size: tuple = self.get_video_size(path=self.source)
-
-        if isinstance(video_size, tuple):
-            video_size: str = f"{video_size[0]}x{video_size[1]}"  # e.g.640x480
-
-        self.write_concat_text()
-        command = f"""
-                    ffmpeg -f concat -safe 0 -i {self.file_name} \
-                    -c:v {self.vcodec} -tag:v {self.tag} \
-                    -s {video_size} -r {self.fps} \
-                    -pix_fmt {self.pix_fmt} \
-                    -c:a {self.acodec} -ar {self.bitrate} \
-                    -c:s copy \
-                    {media_map} -map 0:s? \
-                    -threads {self.threads} \
-                    {self.concat_name}
-                   """
-
-        # リスト内の空白、改行コードを削除する。文字列に\nがあれば空白に置換する
-        filled = [i.replace('\n', '')
-                  for i in command.split(" ") if i and i != '\n']
-        return filled
