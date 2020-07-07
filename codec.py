@@ -1,9 +1,10 @@
-from subprocess import run
+from subprocess import run, PIPE
 from os import chmod, scandir
 from os.path import join, splitext
 from files import Values, Operation, Crop
 from datetime import datetime
-from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
+from sys import platform
+from re import search
 
 
 class Default(object):
@@ -26,11 +27,29 @@ class Default(object):
         self.noaudio: bool = args['noaudio']
         self.thumbnail: bool = args['thumbnail']
 
-    def get_video_size(self, path: str) -> tuple:
-        video = VideoCapture(path)
-        width = int(video.get(CAP_PROP_FRAME_WIDTH))
-        height = int(video.get(CAP_PROP_FRAME_HEIGHT))
-        return width, height
+    @staticmethod
+    def get_video_size(path: str,
+                       ffmpeg_bin_path: str = "/usr/bin/ffmpeg") -> tuple:
+        command: list = f"{ffmpeg_bin_path} -i {path}".split()
+        try:
+            from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
+        except ImportError:
+            # ffmpeg -iコマンドを使って手動で探索を試みる
+            if platform == "linux":
+                result = run(command, shell=False, encoding='utf-8', stderr=PIPE)
+            elif platform == "win32":
+                result = run(command, shell=True, encoding='utf-8', stderr=PIPE)
+
+            video_size: str = ""
+            for i in result.stderr.split():
+                if search(pattern=r"^[0-9]+x[0-9]+$", string=i):
+                    return tuple(i.split('x'))
+            raise VideoSizeNotFoundError
+        else:
+            video = VideoCapture(path)
+            width = int(video.get(CAP_PROP_FRAME_WIDTH))
+            height = int(video.get(CAP_PROP_FRAME_HEIGHT))
+            return width, height
 
     def subprocess_run(self,
                        command: str,
@@ -115,3 +134,7 @@ class hls(Default):
             f"-segment_list {join(self.dest, 'output.m3u8')} " \
             f"{join(self.dest, 'stream-%06d.ts')}"
         return command.split(" ")
+
+
+class VideoSizeNotFoundError(Exception):
+    pass
