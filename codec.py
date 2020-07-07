@@ -39,8 +39,6 @@ class Default(object):
                 result = run(command, shell=False, encoding='utf-8', stderr=PIPE)
             elif platform == "win32":
                 result = run(command, shell=True, encoding='utf-8', stderr=PIPE)
-
-            video_size: str = ""
             for i in result.stderr.split():
                 if search(pattern=r"^[0-9]+x[0-9]+$", string=i):
                     return tuple(i.split('x'))
