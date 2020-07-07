@@ -1,8 +1,6 @@
 from subprocess import run, PIPE
-from os import chmod, scandir
 from os.path import join, splitext
 from files import Values, Operation, Crop
-from datetime import datetime
 from sys import platform
 from re import search
 
@@ -32,13 +30,21 @@ class Default(object):
                        ffmpeg_bin_path: str = "/usr/bin/ffmpeg") -> tuple:
         command: list = f"{ffmpeg_bin_path} -i {path}".split()
         try:
-            from cv2 import VideoCapture, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
+            from cv2 import VideoCapture, \
+                            CAP_PROP_FRAME_WIDTH, \
+                            CAP_PROP_FRAME_HEIGHT
         except ImportError:
             # ffmpeg -iコマンドを使って手動で探索を試みる
             if platform == "linux":
-                result = run(command, shell=False, encoding='utf-8', stderr=PIPE)
+                result = run(command,
+                             shell=False,
+                             encoding='utf-8',
+                             stderr=PIPE)
             elif platform == "win32":
-                result = run(command, shell=True, encoding='utf-8', stderr=PIPE)
+                result = run(command,
+                             shell=True,
+                             encoding='utf-8',
+                             stderr=PIPE)
             for i in result.stderr.split():
                 if search(pattern=r"^[0-9]+x[0-9]+$", string=i):
                     return tuple(i.split('x'))

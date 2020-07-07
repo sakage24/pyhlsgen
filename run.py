@@ -1,5 +1,4 @@
 from os import rename
-from os.path import join
 from codec import hls, Others
 from files import Values, Operation
 
@@ -7,7 +6,6 @@ from files import Values, Operation
 def main():
     ops = Operation()
     args = ops.do_parse_args()
-    thumbnail: bool = False
     for f in ops.get_movie_list():
         fixed = ops.escape_chars(name=f)
         try:
